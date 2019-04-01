@@ -1,0 +1,21 @@
+[package]
+name = "boyer-moore-magiclen"
+version = "0.1.0"
+authors = ["Magic Len <len@magiclen.org>"]
+edition = "2018"
+repository = "https://github.com/magiclen/boyer-moore-magiclen"
+homepage = "https://magiclen.org/boyer-moore-magiclen"
+keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search-algorithm", "string", "search"]
+categories = ["algorithms"]
+description= "Boyer-Moore-MagicLen, a fast string search algorithms implemented in Rust."
+readme = "README.md"
+license = "MIT"
+
+[badges]
+travis-ci = { repository = "magiclen/boyer-moore-magiclen", branch = "master" }
+appveyor = { repository = "magiclen/boyer-moore-magiclen", branch = "master", service = "github" }
+
+[dependencies]
+
+[dev-dependencies]
+scanner-rust = "1.0.4"
