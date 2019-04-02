@@ -19,3 +19,12 @@ appveyor = { repository = "magiclen/boyer-moore-magiclen", branch = "master", se
 
 [dev-dependencies]
 scanner-rust = "1.0.4"
+criterion = "0.2.10"
+regex = "1.1.5"
+
+[features]
+nightly = []
+
+[[bench]]
+name = "latin_1"
+harness = false
