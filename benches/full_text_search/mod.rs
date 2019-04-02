@@ -88,11 +88,11 @@ pub fn latin_1_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<
 
     let bad_char_shift_map = BMLatin1BadCharShiftMap::create_bad_char_shift_map_from_str(pattern).unwrap();
 
-    boyer_moore_magiclen::latin_1::find_in_str(text, pattern.as_bytes(), &bad_char_shift_map, 0)
+    boyer_moore_magiclen::latin_1::find_full_in_str(text, pattern.as_bytes(), &bad_char_shift_map, 0)
 }
 
 pub fn character_search_char(text: &[char], pattern: &[char]) -> Vec<usize> {
     let bad_char_shift_map = BMCharacterBadCharShiftMap::create_bad_char_shift_map_from_char_slice(pattern).unwrap();
 
-    boyer_moore_magiclen::character::find_in_char_slice(text, pattern, &bad_char_shift_map, 0)
+    boyer_moore_magiclen::character::find_full_in_char_slice(text, pattern, &bad_char_shift_map, 0)
 }
