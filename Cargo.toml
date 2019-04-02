@@ -21,10 +21,11 @@ appveyor = { repository = "magiclen/boyer-moore-magiclen", branch = "master", se
 scanner-rust = "1.0.4"
 criterion = "0.2.10"
 regex = "1.1.5"
+needle = "0.1.1"
 
 [features]
 nightly = []
 
 [[bench]]
-name = "latin_1"
+name = "full_text_latin_1"
 harness = false
