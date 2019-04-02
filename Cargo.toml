@@ -29,3 +29,7 @@ nightly = []
 [[bench]]
 name = "full_text_latin_1"
 harness = false
+
+[[bench]]
+name = "text_latin_1"
+harness = false

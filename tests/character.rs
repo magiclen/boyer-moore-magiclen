@@ -17,12 +17,12 @@ fn data_input_from_file() {
                                   let pattern = pattern.chars().collect::<Vec<char>>();
                                   let text = text.chars().collect::<Vec<char>>();
 
-                                  let bm = BMCharacter::from_char_slice(&pattern).unwrap();
+                                  let bm = BMCharacter::from(&pattern).unwrap();
 
-                                  assert_eq!(answer.clone(), bm.find_full_all_in_char_slice(&text));
-                                  assert_eq!(answer.iter().rev().map(|&n| n).collect::<Vec<usize>>(), bm.rfind_full_all_in_char_slice(&text));
-                                  assert_eq!(answer_not_full.clone(), bm.find_all_in_char_slice(&text));
-                                  assert_eq!(answer_not_full_rev.clone(), bm.rfind_all_in_char_slice(&text));
+                                  assert_eq!(answer.clone(), bm.find_full_all_in(&text));
+                                  assert_eq!(answer.iter().rev().map(|&n| n).collect::<Vec<usize>>(), bm.rfind_full_all_in(&text));
+                                  assert_eq!(answer_not_full.clone(), bm.find_all_in(&text));
+                                  assert_eq!(answer_not_full_rev.clone(), bm.rfind_all_in(&text));
                               },
     );
 }

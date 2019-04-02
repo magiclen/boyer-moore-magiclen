@@ -4,13 +4,13 @@ extern crate criterion;
 extern crate regex;
 extern crate needle;
 
-mod full_text_search;
+mod text_search;
 
 use std::fs;
 
 use criterion::Criterion;
 
-use full_text_search::*;
+use text_search::*;
 
 #[cfg(windows)]
 const TXT_PATH: &'static str = r"benches\data\vgilante.txt";
