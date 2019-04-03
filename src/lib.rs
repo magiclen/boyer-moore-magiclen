@@ -21,7 +21,7 @@ let bmb = BMByte::from("oocoo").unwrap();
 
 Now, we can search any binary data or UTF-8 data for the pattern `oocoo`.
 
-There are two search modes and two search directions. The first mode is called **full text search**, which finds the positions of the matched sub-sequences including the overlap ones.
+There are two search modes and two search directions. The first mode is called **full text search**, which finds the positions of the matched sub-sequences including the overlapping ones.
 
 ```rust
 extern crate boyer_moore_magiclen;
@@ -33,7 +33,7 @@ let bmb = BMByte::from("oocoo").unwrap();
 assert_eq!(vec![1, 4], bmb.find_full_in("coocoocoocoo", 2));
 ```
 
-The other mode is called **normal text search**, which finds the positions of the matched sub-sequences excluding the overlap ones.
+The other mode is called **normal text search**, which finds the positions of the matched sub-sequences excluding the overlapping ones.
 
 ```rust
 extern crate boyer_moore_magiclen;
