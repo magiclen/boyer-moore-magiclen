@@ -7,7 +7,7 @@ repository = "https://github.com/magiclen/boyer-moore-magiclen"
 homepage = "https://magiclen.org/rust-boyer-moore-magiclen"
 keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search-algorithm", "string", "search"]
 categories = ["algorithms"]
-description= "Boyer-Moore-MagicLen, a fast string search algorithms implemented in Rust."
+description= "Boyer-Moore-MagicLen, a fast string search algorithm implemented in Rust."
 readme = "README.md"
 license = "MIT"
 
