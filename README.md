@@ -76,13 +76,13 @@ assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
 ## Benchmark
 
 ```bash
-cargo bench --bench full_text_search
+cargo +nightly bench --bench full_text_search
 ```
 
 or
 
 ```bash
-cargo bench --bench normal_text_search
+cargo +nightly bench --bench normal_text_search
 ```
 
 ## Crates.io
