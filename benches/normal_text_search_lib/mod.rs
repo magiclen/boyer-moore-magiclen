@@ -79,10 +79,10 @@ pub fn horspool_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec
     needle.find_in(text.as_bytes()).collect()
 }
 
-pub fn latin_1_search<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: TP) -> Vec<usize> {
-    let bad_char_shift_map = BMLatin1BadCharShiftMap::create_bad_char_shift_map(&pattern).unwrap();
+pub fn bmb_search<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP) -> Vec<usize> {
+    let bad_char_shift_map = BMByteBadCharShiftMap::create_bad_char_shift_map(&pattern).unwrap();
 
-    boyer_moore_magiclen::latin_1::find(text, pattern, &bad_char_shift_map, 0)
+    boyer_moore_magiclen::byte::find(text, pattern, &bad_char_shift_map, 0)
 }
 
 pub fn character_search_char<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(text: TT, pattern: TP) -> Vec<usize> {

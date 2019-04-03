@@ -164,6 +164,7 @@ impl BMCharacterBadCharShiftMapRev {
 
 // TODO BM
 
+/// Using Boyer-Moore-MagicLen to search character sub-sequences in any character sequence.
 #[derive(Debug)]
 pub struct BMCharacter {
     bad_char_shift_map: BMCharacterBadCharShiftMap,
@@ -172,6 +173,15 @@ pub struct BMCharacter {
 }
 
 impl BMCharacter {
+    /// Create a `BMByte` instance from a pattern (the search needle).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    /// ```
     pub fn from<T: BMCharacterSearchable>(pattern: T) -> Option<BMCharacter> {
         let bad_char_shift_map = BMCharacterBadCharShiftMap::create_bad_char_shift_map(&pattern)?;
         let bad_char_shift_map_rev = BMCharacterBadCharShiftMapRev::create_bad_char_shift_map(&pattern)?;
@@ -187,28 +197,64 @@ impl BMCharacter {
 // TODO Find Full
 
 impl BMCharacter {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![1, 4, 7], bmc.find_full_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn find_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
         find_full(text, &self.pattern, &self.bad_char_shift_map, 0)
     }
 
-    pub fn find_full_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).map(|&p| p)
-    }
-
+    /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![1, 4], bmc.find_full_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 2));
+    /// ```
     pub fn find_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         find_full(text, &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
 impl BMCharacter {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![7, 4, 1], bmc.rfind_full_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn rfind_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
         rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
-    pub fn rfind_full_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).map(|&p| p)
-    }
-
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![7, 4], bmc.rfind_full_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 2));
+    /// ```
     pub fn rfind_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
@@ -366,28 +412,94 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(text: TT
 // TODO Find
 
 impl BMCharacter {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![1, 7], bmc.find_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn find_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, 0)
     }
 
+    /// Find and return the position of the first matched sub-sequence in any text (the haystack).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(Some(1), bmc.find_first_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn find_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).map(|&p| p)
     }
 
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![1], bmc.find_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 1));
+    /// ```
     pub fn find_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
 impl BMCharacter {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![7, 1], bmc.rfind_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn rfind_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
+    /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(Some(7), bmc.rfind_first_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o']));
+    /// ```
     pub fn rfind_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).map(|&p| p)
     }
 
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMCharacter;
+    ///
+    /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
+    ///
+    /// assert_eq!(vec![7], bmc.rfind_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 1));
+    /// ```
     pub fn rfind_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
     }

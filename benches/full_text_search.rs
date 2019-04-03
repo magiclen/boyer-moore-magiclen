@@ -4,13 +4,13 @@ extern crate criterion;
 extern crate regex;
 extern crate needle;
 
-mod text_search;
+mod full_text_search_lib;
 
 use std::fs;
 
 use criterion::Criterion;
 
-use text_search::*;
+use full_text_search_lib::*;
 
 #[cfg(windows)]
 const TXT_PATH: &'static str = r"benches\data\vgilante.txt";
@@ -36,12 +36,12 @@ xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz";
 
-fn short_native(c: &mut Criterion) {
+fn short_naive(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_native", move |b| {
+    c.bench_function("short_naive", move |b| {
         b.iter(|| {
-            let result = native_search(&text, PATTERN_SHORT);
+            let result = naive_search(&text, PATTERN_SHORT);
 
             assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
         })
@@ -84,12 +84,12 @@ fn short_horspool(c: &mut Criterion) {
     });
 }
 
-fn short_latin_1(c: &mut Criterion) {
+fn short_bmb(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_latin_1", move |b| {
+    c.bench_function("short_bmb", move |b| {
         b.iter(|| {
-            let result = latin_1_search(text.as_str(), PATTERN_SHORT);
+            let result = bmb_search(text.as_str(), PATTERN_SHORT);
 
             assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
         })
@@ -111,15 +111,15 @@ fn short_character(c: &mut Criterion) {
     });
 }
 
-criterion_group!(short, short_native, short_regex, short_bm, short_horspool, short_latin_1, short_character);
+criterion_group!(short, short_naive, short_regex, short_bm, short_horspool, short_bmb, short_character);
 
 
-fn long_native(c: &mut Criterion) {
+fn long_naive(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_native", move |b| {
+    c.bench_function("long_naive", move |b| {
         b.iter(|| {
-            let result = native_search(&text, PATTERN_LONG);
+            let result = naive_search(&text, PATTERN_LONG);
 
             assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
         })
@@ -162,12 +162,12 @@ fn long_horspool(c: &mut Criterion) {
     });
 }
 
-fn long_latin_1(c: &mut Criterion) {
+fn long_bmb(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_latin_1", move |b| {
+    c.bench_function("long_bmb", move |b| {
         b.iter(|| {
-            let result = latin_1_search(text.as_str(), PATTERN_LONG);
+            let result = bmb_search(text.as_str(), PATTERN_LONG);
 
             assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
         })
@@ -189,14 +189,14 @@ fn long_character(c: &mut Criterion) {
     });
 }
 
-criterion_group!(long, long_native, long_regex, long_bm, long_horspool, long_latin_1, long_character);
+criterion_group!(long, long_naive, long_regex, long_bm, long_horspool, long_bmb, long_character);
 
-fn not_exist_short_native(c: &mut Criterion) {
+fn not_exist_short_naive(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_native", move |b| {
+    c.bench_function("not_exist_short_naive", move |b| {
         b.iter(|| {
-            let result = native_search(&text, NOT_EXIST_PATTERN_SHORT);
+            let result = naive_search(&text, NOT_EXIST_PATTERN_SHORT);
 
             assert_eq!(0, result.len());
         })
@@ -239,12 +239,12 @@ fn not_exist_short_horspool(c: &mut Criterion) {
     });
 }
 
-fn not_exist_short_latin_1(c: &mut Criterion) {
+fn not_exist_short_bmb(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_latin_1", move |b| {
+    c.bench_function("not_exist_short_bmb", move |b| {
         b.iter(|| {
-            let result = latin_1_search(text.as_str(), NOT_EXIST_PATTERN_SHORT);
+            let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_SHORT);
 
             assert_eq!(0, result.len());
         })
@@ -266,14 +266,14 @@ fn not_exist_short_character(c: &mut Criterion) {
     });
 }
 
-criterion_group!(not_exist_short, not_exist_short_native, not_exist_short_regex, not_exist_short_bm, not_exist_short_horspool, not_exist_short_latin_1, not_exist_short_character);
+criterion_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bm, not_exist_short_horspool, not_exist_short_bmb, not_exist_short_character);
 
-fn not_exist_long_native(c: &mut Criterion) {
+fn not_exist_long_naive(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_native", move |b| {
+    c.bench_function("not_exist_long_naive", move |b| {
         b.iter(|| {
-            let result = native_search(&text, NOT_EXIST_PATTERN_LONG);
+            let result = naive_search(&text, NOT_EXIST_PATTERN_LONG);
 
             assert_eq!(0, result.len());
         })
@@ -316,12 +316,12 @@ fn not_exist_long_horspool(c: &mut Criterion) {
     });
 }
 
-fn not_exist_long_latin_1(c: &mut Criterion) {
+fn not_exist_long_bmb(c: &mut Criterion) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_latin_1", move |b| {
+    c.bench_function("not_exist_long_bmb", move |b| {
         b.iter(|| {
-            let result = latin_1_search(text.as_str(), NOT_EXIST_PATTERN_LONG);
+            let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_LONG);
 
             assert_eq!(0, result.len());
         })
@@ -343,6 +343,6 @@ fn not_exist_long_character(c: &mut Criterion) {
     });
 }
 
-criterion_group!(not_exist_long, not_exist_long_native, not_exist_long_regex, not_exist_long_bm, not_exist_long_horspool, not_exist_long_latin_1, not_exist_long_character);
+criterion_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bm, not_exist_long_horspool, not_exist_long_bmb, not_exist_long_character);
 
 criterion_main!(short, long, not_exist_short, not_exist_long);

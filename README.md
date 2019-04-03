@@ -1,5 +1,7 @@
-/*!
-# Boyer-Moore-MagicLen
+Boyer-Moore-MagicLen
+====================
+
+[![Build Status](https://travis-ci.org/magiclen/boyer-moore-magiclen.svg?branch=master)](https://travis-ci.org/magiclen/boyer-moore-magiclen)
 
 This crate can be used to search substrings in a string or search any sub-sequences in any sequence by using boyer-moore-magiclen (which is sometimes faster than boyer-moore and boyer-moore-horspool).
 
@@ -69,12 +71,26 @@ let bmb = BMByte::from("oocoo").unwrap();
 assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
 ```
 
-*/
+## Benchmark
 
-/// This module helps you search sub-sequences in any byte sequence, including self-synchronizing string encoding data such as UTF-8.
-pub mod byte;
-/// This module helps you search character sub-sequences in any character sequence.
-pub mod character;
+```bash
+cargo bench --bench full_text_search
+```
 
-pub use byte::{BMByte, BMByteSearchable, BMByteBadCharShiftMap, BMByteBadCharShiftMapRev};
-pub use character::{BMCharacter, BMCharacterSearchable, BMCharacterBadCharShiftMap, BMCharacterBadCharShiftMapRev};
+or
+
+```bash
+cargo bench --bench normal_text_search
+```
+
+## Crates.io
+
+https://crates.io/crates/boyer-moore-magiclen
+
+## Documentation
+
+https://docs.rs/boyer-moore-magiclen
+
+## License
+
+[MIT](LICENSE)

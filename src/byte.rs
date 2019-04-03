@@ -5,7 +5,7 @@ use std::ops::Deref;
 
 // TODO Searchable
 
-pub trait BMLatin1Searchable {
+pub trait BMByteSearchable {
     #[inline]
     fn len(&self) -> usize;
 
@@ -16,7 +16,7 @@ pub trait BMLatin1Searchable {
     fn iter(&self) -> Iter<u8>;
 }
 
-impl<'a> BMLatin1Searchable for String {
+impl<'a> BMByteSearchable for String {
     #[inline]
     fn len(&self) -> usize {
         String::len(&self)
@@ -33,7 +33,7 @@ impl<'a> BMLatin1Searchable for String {
     }
 }
 
-impl<'a> BMLatin1Searchable for &str {
+impl<'a> BMByteSearchable for &str {
     #[inline]
     fn len(&self) -> usize {
         str::len(&self)
@@ -52,7 +52,7 @@ impl<'a> BMLatin1Searchable for &str {
     }
 }
 
-impl<'a> BMLatin1Searchable for [u8] {
+impl<'a> BMByteSearchable for [u8] {
     #[inline]
     fn len(&self) -> usize {
         <[u8]>::len(self)
@@ -69,7 +69,7 @@ impl<'a> BMLatin1Searchable for [u8] {
     }
 }
 
-impl<'a> BMLatin1Searchable for Vec<u8> {
+impl<'a> BMByteSearchable for Vec<u8> {
     #[inline]
     fn len(&self) -> usize {
         Vec::len(&self)
@@ -86,41 +86,41 @@ impl<'a> BMLatin1Searchable for Vec<u8> {
     }
 }
 
-impl<T: BMLatin1Searchable> BMLatin1Searchable for &T {
+impl<T: BMByteSearchable> BMByteSearchable for &T {
     #[inline]
     fn len(&self) -> usize {
-        <BMLatin1Searchable>::len(*self)
+        <BMByteSearchable>::len(*self)
     }
 
     #[inline]
     fn value_at(&self, index: usize) -> u8 {
-        <BMLatin1Searchable>::value_at(*self, index)
+        <BMByteSearchable>::value_at(*self, index)
     }
 
     #[inline]
     fn iter(&self) -> Iter<u8> {
-        <BMLatin1Searchable>::iter(*self)
+        <BMByteSearchable>::iter(*self)
     }
 }
 
 // TODO BasCharShiftMap
 
-pub struct BMLatin1BadCharShiftMap {
+pub struct BMByteBadCharShiftMap {
     t: [usize; 256]
 }
 
-impl Debug for BMLatin1BadCharShiftMap {
+impl Debug for BMByteBadCharShiftMap {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMLatin1BadCharShiftMap {{\n    t: {:?}\n}}", self.t.as_ref()))
+            f.write_fmt(format_args!("BMByteBadCharShiftMap {{\n    t: {:?}\n}}", self.t.as_ref()))
         } else {
-            f.write_fmt(format_args!("BMLatin1BadCharShiftMap {{ t: {:?} }}", self.t.as_ref()))
+            f.write_fmt(format_args!("BMByteBadCharShiftMap {{ t: {:?} }}", self.t.as_ref()))
         }
     }
 }
 
-impl Deref for BMLatin1BadCharShiftMap {
+impl Deref for BMByteBadCharShiftMap {
     type Target = [usize];
 
     #[inline]
@@ -129,22 +129,22 @@ impl Deref for BMLatin1BadCharShiftMap {
     }
 }
 
-pub struct BMLatin1BadCharShiftMapRev {
+pub struct BMByteBadCharShiftMapRev {
     t: [usize; 256]
 }
 
-impl Debug for BMLatin1BadCharShiftMapRev {
+impl Debug for BMByteBadCharShiftMapRev {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMLatin1BadCharShiftMapRev {{\n    t: {:?}\n}}", self.t.as_ref()))
+            f.write_fmt(format_args!("BMByteBadCharShiftMapRev {{\n    t: {:?}\n}}", self.t.as_ref()))
         } else {
-            f.write_fmt(format_args!("BMLatin1BadCharShiftMapRev {{ t: {:?} }}", self.t.as_ref()))
+            f.write_fmt(format_args!("BMByteBadCharShiftMapRev {{ t: {:?} }}", self.t.as_ref()))
         }
     }
 }
 
-impl Deref for BMLatin1BadCharShiftMapRev {
+impl Deref for BMByteBadCharShiftMapRev {
     type Target = [usize];
 
     #[inline]
@@ -153,8 +153,8 @@ impl Deref for BMLatin1BadCharShiftMapRev {
     }
 }
 
-impl BMLatin1BadCharShiftMap {
-    pub fn create_bad_char_shift_map<T: BMLatin1Searchable>(pattern: T) -> Option<BMLatin1BadCharShiftMap> {
+impl BMByteBadCharShiftMap {
+    pub fn create_bad_char_shift_map<T: BMByteSearchable>(pattern: T) -> Option<BMByteBadCharShiftMap> {
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -169,14 +169,14 @@ impl BMLatin1BadCharShiftMap {
             bad_char_shift_map[c] = pattern_len_dec - i;
         }
 
-        Some(BMLatin1BadCharShiftMap {
+        Some(BMByteBadCharShiftMap {
             t: bad_char_shift_map
         })
     }
 }
 
-impl BMLatin1BadCharShiftMapRev {
-    pub fn create_bad_char_shift_map<T: BMLatin1Searchable>(pattern: T) -> Option<BMLatin1BadCharShiftMapRev> {
+impl BMByteBadCharShiftMapRev {
+    pub fn create_bad_char_shift_map<T: BMByteSearchable>(pattern: T) -> Option<BMByteBadCharShiftMapRev> {
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -191,7 +191,7 @@ impl BMLatin1BadCharShiftMapRev {
             bad_char_shift_map[c] = i;
         }
 
-        Some(BMLatin1BadCharShiftMapRev {
+        Some(BMByteBadCharShiftMapRev {
             t: bad_char_shift_map
         })
     }
@@ -199,19 +199,29 @@ impl BMLatin1BadCharShiftMapRev {
 
 // TODO BM
 
+/// Using Boyer-Moore-MagicLen to search byte sub-sequences in any byte sequence, including self-synchronizing string encoding data such as UTF-8.
 #[derive(Debug)]
-pub struct BMLatin1 {
-    bad_char_shift_map: BMLatin1BadCharShiftMap,
-    bad_char_shift_map_rev: BMLatin1BadCharShiftMapRev,
+pub struct BMByte {
+    bad_char_shift_map: BMByteBadCharShiftMap,
+    bad_char_shift_map_rev: BMByteBadCharShiftMapRev,
     pattern: Vec<u8>,
 }
 
-impl BMLatin1 {
-    pub fn from<T: BMLatin1Searchable>(pattern: T) -> Option<BMLatin1> {
-        let bad_char_shift_map = BMLatin1BadCharShiftMap::create_bad_char_shift_map(&pattern)?;
-        let bad_char_shift_map_rev = BMLatin1BadCharShiftMapRev::create_bad_char_shift_map(&pattern)?;
+impl BMByte {
+    /// Create a `BMByte` instance from a pattern (the needle).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    /// ```
+    pub fn from<T: BMByteSearchable>(pattern: T) -> Option<BMByte> {
+        let bad_char_shift_map = BMByteBadCharShiftMap::create_bad_char_shift_map(&pattern)?;
+        let bad_char_shift_map_rev = BMByteBadCharShiftMapRev::create_bad_char_shift_map(&pattern)?;
 
-        Some(BMLatin1 {
+        Some(BMByte {
             bad_char_shift_map,
             bad_char_shift_map_rev,
             pattern: pattern.iter().map(|&b| b).collect(),
@@ -221,35 +231,71 @@ impl BMLatin1 {
 
 // TODO Find Full
 
-impl BMLatin1 {
-    pub fn find_full_all_in<T: BMLatin1Searchable>(&self, text: T) -> Vec<usize> {
+impl BMByte {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![1, 4, 7], bmb.find_full_all_in("coocoocoocoo"));
+    /// ```
+    pub fn find_full_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
         find_full(text, &self.pattern, &self.bad_char_shift_map, 0)
     }
 
-    pub fn find_full_first_in<T: BMLatin1Searchable>(&self, text: T) -> Option<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).map(|&p| p)
-    }
-
-    pub fn find_full_in<T: BMLatin1Searchable>(&self, text: T, limit: usize) -> Vec<usize> {
+    /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![1, 4], bmb.find_full_in("coocoocoocoo", 2));
+    /// ```
+    pub fn find_full_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         find_full(text, &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
-impl BMLatin1 {
-    pub fn rfind_full_all_in<T: BMLatin1Searchable>(&self, text: T) -> Vec<usize> {
+impl BMByte {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
+    /// ```
+    pub fn rfind_full_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
         rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
-    pub fn rfind_full_first_in<T: BMLatin1Searchable>(&self, text: T) -> Option<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).map(|&p| p)
-    }
-
-    pub fn rfind_full_in<T: BMLatin1Searchable>(&self, text: T, limit: usize) -> Vec<usize> {
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![7, 4], bmb.rfind_full_in("coocoocoocoo", 2));
+    /// ```
+    pub fn rfind_full_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find_full<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: TP, bad_char_shift_map: &BMLatin1BadCharShiftMap, limit: usize) -> Vec<usize> {
+pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMap, limit: usize) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -320,7 +366,7 @@ pub fn find_full<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, patte
     result
 }
 
-pub fn rfind_full<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: TP, bad_char_shift_map: &BMLatin1BadCharShiftMapRev, limit: usize) -> Vec<usize> {
+pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMapRev, limit: usize) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -398,35 +444,101 @@ pub fn rfind_full<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, patt
 
 // TODO Find
 
-impl BMLatin1 {
-    pub fn find_all_in<T: BMLatin1Searchable>(&self, text: T) -> Vec<usize> {
+impl BMByte {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![1, 7], bmb.find_all_in("coocoocoocoo"));
+    /// ```
+    pub fn find_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, 0)
     }
 
-    pub fn find_first_in<T: BMLatin1Searchable>(&self, text: T) -> Option<usize> {
+    /// Find and return the position of the first matched sub-sequence in any text (the haystack).
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(Some(1), bmb.find_first_in("coocoocoocoo"));
+    /// ```
+    pub fn find_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).map(|&p| p)
     }
 
-    pub fn find_in<T: BMLatin1Searchable>(&self, text: T, limit: usize) -> Vec<usize> {
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![1], bmb.find_in("coocoocoocoo", 1));
+    /// ```
+    pub fn find_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         find(text, &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
-impl BMLatin1 {
-    pub fn rfind_all_in<T: BMLatin1Searchable>(&self, text: T) -> Vec<usize> {
+impl BMByte {
+    /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![7, 1], bmb.rfind_all_in("coocoocoocoo"));
+    /// ```
+    pub fn rfind_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
-    pub fn rfind_first_in<T: BMLatin1Searchable>(&self, text: T) -> Option<usize> {
+    /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(Some(7), bmb.rfind_first_in("coocoocoocoo"));
+    /// ```
+    pub fn rfind_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).map(|&p| p)
     }
 
-    pub fn rfind_in<T: BMLatin1Searchable>(&self, text: T, limit: usize) -> Vec<usize> {
+    /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
+    ///
+    /// ```
+    /// extern crate boyer_moore_magiclen;
+    ///
+    /// use boyer_moore_magiclen::BMByte;
+    ///
+    /// let bmb = BMByte::from("oocoo").unwrap();
+    ///
+    /// assert_eq!(vec![7], bmb.rfind_in("coocoocoocoo", 1));
+    /// ```
+    pub fn rfind_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
         rfind(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: TP, bad_char_shift_map: &BMLatin1BadCharShiftMap, limit: usize) -> Vec<usize> {
+pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMap, limit: usize) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -487,7 +599,7 @@ pub fn find<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: T
     result
 }
 
-pub fn rfind<TT: BMLatin1Searchable, TP: BMLatin1Searchable>(text: TT, pattern: TP, bad_char_shift_map: &BMLatin1BadCharShiftMapRev, limit: usize) -> Vec<usize> {
+pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMapRev, limit: usize) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 

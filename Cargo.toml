@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/boyer-moore-magiclen"
-homepage = "https://magiclen.org/boyer-moore-magiclen"
+homepage = "https://magiclen.org/rust-boyer-moore-magiclen"
 keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search-algorithm", "string", "search"]
 categories = ["algorithms"]
 description= "Boyer-Moore-MagicLen, a fast string search algorithms implemented in Rust."
@@ -27,9 +27,9 @@ needle = "0.1.1"
 nightly = []
 
 [[bench]]
-name = "full_text_latin_1"
+name = "full_text_search"
 harness = false
 
 [[bench]]
-name = "text_latin_1"
+name = "normal_text_search"
 harness = false
