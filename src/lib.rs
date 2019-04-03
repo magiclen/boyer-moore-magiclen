@@ -5,7 +5,7 @@ This crate can be used to search substrings in a string or search any sub-sequen
 
 ## Usage
 
-For binary data and UTF-8 data, use the `BMByte` struct. For character sequences, use the `BMCharacter` struct (however it much slower than `BMByte`).
+For binary data and UTF-8 data, use the `BMByte` struct. For character sequences, use the `BMCharacter` struct (however it is much slower than `BMByte`).
 
 Every `BMXXX` has a `from` associated function to create the instance by a search pattern (the needle).
 
