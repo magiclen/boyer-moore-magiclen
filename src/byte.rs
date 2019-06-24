@@ -89,17 +89,17 @@ impl<'a> BMByteSearchable for Vec<u8> {
 impl<T: BMByteSearchable> BMByteSearchable for &T {
     #[inline]
     fn len(&self) -> usize {
-        <BMByteSearchable>::len(*self)
+        <dyn BMByteSearchable>::len(*self)
     }
 
     #[inline]
     fn value_at(&self, index: usize) -> u8 {
-        <BMByteSearchable>::value_at(*self, index)
+        <dyn BMByteSearchable>::value_at(*self, index)
     }
 
     #[inline]
     fn iter(&self) -> Iter<u8> {
-        <BMByteSearchable>::iter(*self)
+        <dyn BMByteSearchable>::iter(*self)
     }
 }
 
@@ -113,9 +113,13 @@ impl Debug for BMByteBadCharShiftMap {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMByteBadCharShiftMap {{\n    t: {:?}\n}}", self.t.as_ref()))
+            let debug_text = format!("BMByteBadCharShiftMap {{\n    t: {:#?}\n}}", self.t.as_ref());
+
+            f.pad(&debug_text)
         } else {
-            f.write_fmt(format_args!("BMByteBadCharShiftMap {{ t: {:?} }}", self.t.as_ref()))
+            let debug_text = format!("BMByteBadCharShiftMap {{ t: {:?} }}", self.t.as_ref());
+
+            f.pad(&debug_text)
         }
     }
 }
@@ -137,9 +141,13 @@ impl Debug for BMByteBadCharShiftMapRev {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMByteBadCharShiftMapRev {{\n    t: {:?}\n}}", self.t.as_ref()))
+            let debug_text = format!("BMByteBadCharShiftMapRev {{\n    t: {:#?}\n}}", self.t.as_ref());
+
+            f.pad(&debug_text)
         } else {
-            f.write_fmt(format_args!("BMByteBadCharShiftMapRev {{ t: {:?} }}", self.t.as_ref()))
+            let debug_text = format!("BMByteBadCharShiftMapRev {{ t: {:?} }}", self.t.as_ref());
+
+            f.pad(&debug_text)
         }
     }
 }

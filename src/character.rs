@@ -54,17 +54,17 @@ impl<'a> BMCharacterSearchable for Vec<char> {
 impl<T: BMCharacterSearchable> BMCharacterSearchable for &T {
     #[inline]
     fn len(&self) -> usize {
-        <BMCharacterSearchable>::len(*self)
+        <dyn BMCharacterSearchable>::len(*self)
     }
 
     #[inline]
     fn value_at(&self, index: usize) -> char {
-        <BMCharacterSearchable>::value_at(*self, index)
+        <dyn BMCharacterSearchable>::value_at(*self, index)
     }
 
     #[inline]
     fn iter(&self) -> Iter<char> {
-        <BMCharacterSearchable>::iter(*self)
+        <dyn BMCharacterSearchable>::iter(*self)
     }
 }
 
@@ -78,9 +78,13 @@ impl Debug for BMCharacterBadCharShiftMap {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMCharacterBadCharShiftMap {{\n    t: {:?}\n}}", self.t))
+            let debug_text = format!("BMCharacterBadCharShiftMap {{\n    t: {:#?}\n}}", self.t);
+
+            f.pad(&debug_text)
         } else {
-            f.write_fmt(format_args!("BMCharacterBadCharShiftMap {{ t: {:?} }}", self.t))
+            let debug_text = format!("BMCharacterBadCharShiftMap {{ t: {:?} }}", self.t);
+
+            f.pad(&debug_text)
         }
     }
 }
@@ -102,9 +106,13 @@ impl Debug for BMCharacterBadCharShiftMapRev {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
         if f.alternate() {
-            f.write_fmt(format_args!("BMCharacterBadCharShiftMapRev {{\n    t: {:?}\n}}", self.t))
+            let debug_text = format!("BMCharacterBadCharShiftMapRev {{\n    t: {:#?}\n}}", self.t);
+
+            f.pad(&debug_text)
         } else {
-            f.write_fmt(format_args!("BMCharacterBadCharShiftMapRev {{ t: {:?} }}", self.t))
+            let debug_text = format!("BMCharacterBadCharShiftMapRev {{ t: {:?} }}", self.t);
+
+            f.pad(&debug_text)
         }
     }
 }
