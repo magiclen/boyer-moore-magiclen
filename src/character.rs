@@ -70,23 +70,9 @@ impl<T: BMCharacterSearchable> BMCharacterSearchable for &T {
 
 // TODO BasCharShiftMap
 
+#[derive(Debug)]
 pub struct BMCharacterBadCharShiftMap {
     t: HashMap<char, usize>
-}
-
-impl Debug for BMCharacterBadCharShiftMap {
-    #[inline]
-    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        if f.alternate() {
-            let debug_text = format!("BMCharacterBadCharShiftMap {{\n    t: {:#?}\n}}", self.t);
-
-            f.pad(&debug_text)
-        } else {
-            let debug_text = format!("BMCharacterBadCharShiftMap {{ t: {:?} }}", self.t);
-
-            f.pad(&debug_text)
-        }
-    }
 }
 
 impl Deref for BMCharacterBadCharShiftMap {

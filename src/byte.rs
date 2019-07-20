@@ -112,15 +112,13 @@ pub struct BMByteBadCharShiftMap {
 impl Debug for BMByteBadCharShiftMap {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        if f.alternate() {
-            let debug_text = format!("BMByteBadCharShiftMap {{\n    t: {:#?}\n}}", self.t.as_ref());
-
-            f.pad(&debug_text)
+        let data = if f.alternate() {
+            format!("{:#?}", self.t.as_ref())
         } else {
-            let debug_text = format!("BMByteBadCharShiftMap {{ t: {:?} }}", self.t.as_ref());
+            format!("{:?}", self.t.as_ref())
+        };
 
-            f.pad(&debug_text)
-        }
+        impl_debug_for_struct!(BMByteBadCharShiftMap, f, self, (.t, "{}", data));
     }
 }
 

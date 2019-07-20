@@ -71,6 +71,9 @@ assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
 
 */
 
+#[macro_use]
+extern crate debug_helper;
+
 /// This module helps you search sub-sequences in any byte sequence, including self-synchronizing string encoding data such as UTF-8.
 pub mod byte;
 /// This module helps you search character sub-sequences in any character sequence.
