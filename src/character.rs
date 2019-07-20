@@ -1,4 +1,3 @@
-use std::fmt::{self, Formatter, Debug};
 use std::collections::HashMap;
 
 use core::slice::Iter;
@@ -84,23 +83,9 @@ impl Deref for BMCharacterBadCharShiftMap {
     }
 }
 
+#[derive(Debug)]
 pub struct BMCharacterBadCharShiftMapRev {
     t: HashMap<char, usize>
-}
-
-impl Debug for BMCharacterBadCharShiftMapRev {
-    #[inline]
-    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        if f.alternate() {
-            let debug_text = format!("BMCharacterBadCharShiftMapRev {{\n    t: {:#?}\n}}", self.t);
-
-            f.pad(&debug_text)
-        } else {
-            let debug_text = format!("BMCharacterBadCharShiftMapRev {{ t: {:?} }}", self.t);
-
-            f.pad(&debug_text)
-        }
-    }
 }
 
 impl Deref for BMCharacterBadCharShiftMapRev {
