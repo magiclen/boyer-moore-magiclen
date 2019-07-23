@@ -1,6 +1,6 @@
 extern crate boyer_moore_magiclen;
 #[macro_use]
-extern crate criterion;
+extern crate bencher;
 extern crate regex;
 extern crate needle;
 
@@ -8,7 +8,7 @@ mod normal_text_search_lib;
 
 use std::fs;
 
-use criterion::Criterion;
+use bencher::Bencher;
 
 use normal_text_search_lib::*;
 
@@ -36,313 +36,265 @@ xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz";
 
-fn short_naive(c: &mut Criterion) {
+fn short_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_naive", move |b| {
-        b.iter(|| {
-            let result = naive_search(&text, PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = naive_search(&text, PATTERN_SHORT);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-fn short_regex(c: &mut Criterion) {
+fn short_regex(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_regex", move |b| {
-        b.iter(|| {
-            let result = regex_search(&text, PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = regex_search(&text, PATTERN_SHORT);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-fn short_bm(c: &mut Criterion) {
+fn short_bm(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_bm", move |b| {
-        b.iter(|| {
-            let result = bm_search(&text, PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = bm_search(&text, PATTERN_SHORT);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-fn short_horspool(c: &mut Criterion) {
+fn short_horspool(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_horspool", move |b| {
-        b.iter(|| {
-            let result = horspool_search(&text, PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = horspool_search(&text, PATTERN_SHORT);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-fn short_bmb(c: &mut Criterion) {
+fn short_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("short_bmb", move |b| {
-        b.iter(|| {
-            let result = bmb_search(text.as_str(), PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = bmb_search(text.as_str(), PATTERN_SHORT);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-fn short_character(c: &mut Criterion) {
+fn short_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
     let text: Vec<char> = text.chars().collect();
     let pattern: Vec<char> = PATTERN_SHORT.chars().collect();
 
-    c.bench_function("short_character", move |b| {
-        b.iter(|| {
-            let result = character_search_char(&text, &pattern);
+    bencher.iter(|| {
+        let result = character_search_char(&text, &pattern);
 
-            assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
     });
 }
 
-criterion_group!(short, short_naive, short_regex, short_bm, short_horspool, short_bmb, short_character);
+benchmark_group!(short, short_naive, short_regex, short_bm, short_horspool, short_bmb, short_character);
 
 
-fn long_naive(c: &mut Criterion) {
+fn long_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_naive", move |b| {
-        b.iter(|| {
-            let result = naive_search(&text, PATTERN_LONG);
+    bencher.iter(|| {
+        let result = naive_search(&text, PATTERN_LONG);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-fn long_regex(c: &mut Criterion) {
+fn long_regex(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_regex", move |b| {
-        b.iter(|| {
-            let result = regex_search(&text, PATTERN_LONG);
+    bencher.iter(|| {
+        let result = regex_search(&text, PATTERN_LONG);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-fn long_bm(c: &mut Criterion) {
+fn long_bm(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_bm", move |b| {
-        b.iter(|| {
-            let result = bm_search(&text, PATTERN_LONG);
+    bencher.iter(|| {
+        let result = bm_search(&text, PATTERN_LONG);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-fn long_horspool(c: &mut Criterion) {
+fn long_horspool(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_horspool", move |b| {
-        b.iter(|| {
-            let result = horspool_search(&text, PATTERN_LONG);
+    bencher.iter(|| {
+        let result = horspool_search(&text, PATTERN_LONG);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-fn long_bmb(c: &mut Criterion) {
+fn long_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("long_bmb", move |b| {
-        b.iter(|| {
-            let result = bmb_search(text.as_str(), PATTERN_LONG);
+    bencher.iter(|| {
+        let result = bmb_search(text.as_str(), PATTERN_LONG);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-fn long_character(c: &mut Criterion) {
+fn long_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
     let text: Vec<char> = text.chars().collect();
     let pattern: Vec<char> = PATTERN_LONG.chars().collect();
 
-    c.bench_function("long_character", move |b| {
-        b.iter(|| {
-            let result = character_search_char(&text, &pattern);
+    bencher.iter(|| {
+        let result = character_search_char(&text, &pattern);
 
-            assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-        })
+        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
     });
 }
 
-criterion_group!(long, long_naive, long_regex, long_bm, long_horspool, long_bmb, long_character);
+benchmark_group!(long, long_naive, long_regex, long_bm, long_horspool, long_bmb, long_character);
 
-fn not_exist_short_naive(c: &mut Criterion) {
+fn not_exist_short_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_naive", move |b| {
-        b.iter(|| {
-            let result = naive_search(&text, NOT_EXIST_PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = naive_search(&text, NOT_EXIST_PATTERN_SHORT);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_short_regex(c: &mut Criterion) {
+fn not_exist_short_regex(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_regex", move |b| {
-        b.iter(|| {
-            let result = regex_search(&text, NOT_EXIST_PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = regex_search(&text, NOT_EXIST_PATTERN_SHORT);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_short_bm(c: &mut Criterion) {
+fn not_exist_short_bm(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_bm", move |b| {
-        b.iter(|| {
-            let result = bm_search(&text, NOT_EXIST_PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = bm_search(&text, NOT_EXIST_PATTERN_SHORT);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_short_horspool(c: &mut Criterion) {
+fn not_exist_short_horspool(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_horspool", move |b| {
-        b.iter(|| {
-            let result = horspool_search(&text, NOT_EXIST_PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = horspool_search(&text, NOT_EXIST_PATTERN_SHORT);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_short_bmb(c: &mut Criterion) {
+fn not_exist_short_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_short_bmb", move |b| {
-        b.iter(|| {
-            let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_SHORT);
+    bencher.iter(|| {
+        let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_SHORT);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_short_character(c: &mut Criterion) {
+fn not_exist_short_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
     let text: Vec<char> = text.chars().collect();
     let pattern: Vec<char> = NOT_EXIST_PATTERN_SHORT.chars().collect();
 
-    c.bench_function("not_exist_short_character", move |b| {
-        b.iter(|| {
-            let result = character_search_char(&text, &pattern);
+    bencher.iter(|| {
+        let result = character_search_char(&text, &pattern);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-criterion_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bm, not_exist_short_horspool, not_exist_short_bmb, not_exist_short_character);
+benchmark_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bm, not_exist_short_horspool, not_exist_short_bmb, not_exist_short_character);
 
-fn not_exist_long_naive(c: &mut Criterion) {
+fn not_exist_long_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_naive", move |b| {
-        b.iter(|| {
-            let result = naive_search(&text, NOT_EXIST_PATTERN_LONG);
+    bencher.iter(|| {
+        let result = naive_search(&text, NOT_EXIST_PATTERN_LONG);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_long_regex(c: &mut Criterion) {
+fn not_exist_long_regex(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_regex", move |b| {
-        b.iter(|| {
-            let result = regex_search(&text, NOT_EXIST_PATTERN_LONG);
+    bencher.iter(|| {
+        let result = regex_search(&text, NOT_EXIST_PATTERN_LONG);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_long_bm(c: &mut Criterion) {
+fn not_exist_long_bm(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_bm", move |b| {
-        b.iter(|| {
-            let result = bm_search(&text, NOT_EXIST_PATTERN_LONG);
+    bencher.iter(|| {
+        let result = bm_search(&text, NOT_EXIST_PATTERN_LONG);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_long_horspool(c: &mut Criterion) {
+fn not_exist_long_horspool(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_horspool", move |b| {
-        b.iter(|| {
-            let result = horspool_search(&text, NOT_EXIST_PATTERN_LONG);
+    bencher.iter(|| {
+        let result = horspool_search(&text, NOT_EXIST_PATTERN_LONG);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_long_bmb(c: &mut Criterion) {
+fn not_exist_long_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
-    c.bench_function("not_exist_long_bmb", move |b| {
-        b.iter(|| {
-            let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_LONG);
+    bencher.iter(|| {
+        let result = bmb_search(text.as_str(), NOT_EXIST_PATTERN_LONG);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-fn not_exist_long_character(c: &mut Criterion) {
+fn not_exist_long_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
     let text: Vec<char> = text.chars().collect();
     let pattern: Vec<char> = NOT_EXIST_PATTERN_LONG.chars().collect();
 
-    c.bench_function("not_exist_long_character", move |b| {
-        b.iter(|| {
-            let result = character_search_char(&text, &pattern);
+    bencher.iter(|| {
+        let result = character_search_char(&text, &pattern);
 
-            assert_eq!(0, result.len());
-        })
+        assert_eq!(0, result.len());
     });
 }
 
-criterion_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bm, not_exist_long_horspool, not_exist_long_bmb, not_exist_long_character);
+benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bm, not_exist_long_horspool, not_exist_long_bmb, not_exist_long_character);
 
-criterion_main!(short, long, not_exist_short, not_exist_long);
+benchmark_main!(short, long, not_exist_short, not_exist_long);

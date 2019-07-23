@@ -1,7 +1,10 @@
-use std::fmt::{self, Formatter, Debug};
+use alloc::fmt::{self, Formatter, Debug};
 
 use core::slice::Iter;
-use std::ops::Deref;
+use core::ops::Deref;
+
+use alloc::string::String;
+use alloc::vec::Vec;
 
 // TODO Searchable
 

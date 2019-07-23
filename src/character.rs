@@ -1,7 +1,9 @@
-use std::collections::HashMap;
+use hashmap_core::map::HashMap;
 
 use core::slice::Iter;
-use std::ops::Deref;
+use core::ops::Deref;
+
+use alloc::vec::Vec;
 
 // TODO Searchable
 
