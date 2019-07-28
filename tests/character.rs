@@ -1,3 +1,5 @@
+#![cfg(feature = "std")]
+
 extern crate boyer_moore_magiclen;
 
 mod lib;

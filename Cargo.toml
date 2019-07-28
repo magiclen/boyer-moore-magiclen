@@ -1,6 +1,6 @@
 [package]
 name = "boyer-moore-magiclen"
-version = "0.1.10"
+version = "0.1.11"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/boyer-moore-magiclen"
@@ -17,13 +17,16 @@ branch = "master"
 
 [dependencies]
 debug-helper = "0.3"
-hashmap_core = "0.1.10"
 
 [dev-dependencies]
 scanner-rust = "1.0.4"
 bencher = "0.1.5"
 regex = "1.1.5"
 needle = "0.1.1"
+
+[features]
+default = ["std"]
+std = []
 
 [[bench]]
 name = "full_text_search"

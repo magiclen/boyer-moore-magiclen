@@ -1,9 +1,9 @@
-use hashmap_core::map::HashMap;
+#![cfg(feature = "std")]
 
 use core::slice::Iter;
-use core::ops::Deref;
 
-use alloc::vec::Vec;
+use std::collections::HashMap;
+use std::ops::Deref;
 
 // TODO Searchable
 
