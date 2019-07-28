@@ -11,9 +11,9 @@ description= "Boyer-Moore-MagicLen, a fast string search algorithm implemented i
 readme = "README.md"
 license = "MIT"
 
-[badges]
-travis-ci = { repository = "magiclen/boyer-moore-magiclen", branch = "master" }
-appveyor = { repository = "magiclen/boyer-moore-magiclen", branch = "master", service = "github" }
+[badges.travis-ci]
+repository = "magiclen/boyer-moore-magiclen"
+branch = "master"
 
 [dependencies]
 debug-helper = "0.3"

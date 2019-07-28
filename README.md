@@ -2,8 +2,6 @@ Boyer-Moore-MagicLen
 ====================
 
 [![Build Status](https://travis-ci.org/magiclen/boyer-moore-magiclen.svg?branch=master)](https://travis-ci.org/magiclen/boyer-moore-magiclen)
-[![Build status](https://ci.appveyor.com/api/projects/status/wl24no8qec6yogdh/branch/master?svg=true)](https://ci.appveyor.com/project/magiclen/boyer-moore-magiclen/branch/master)
-
 
 This crate can be used to search substrings in a string or search any sub-sequences in any sequence by using boyer-moore-magiclen (which is sometimes faster than boyer-moore and boyer-moore-horspool).
 
