@@ -1,4 +1,4 @@
-#![cfg(feature = "std")]
+#![cfg(feature = "character")]
 
 extern crate boyer_moore_magiclen;
 

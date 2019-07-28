@@ -1,4 +1,4 @@
-#![cfg(feature = "std")]
+#![cfg(feature = "character")]
 
 use core::slice::Iter;
 
