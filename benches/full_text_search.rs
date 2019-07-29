@@ -2,7 +2,6 @@ extern crate boyer_moore_magiclen;
 #[macro_use]
 extern crate bencher;
 extern crate regex;
-extern crate needle;
 
 mod full_text_search_lib;
 
@@ -56,26 +55,6 @@ fn short_regex(bencher: &mut Bencher) {
     });
 }
 
-fn short_bm(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = bm_search(&text, PATTERN_SHORT);
-
-        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-    });
-}
-
-fn short_horspool(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = horspool_search(&text, PATTERN_SHORT);
-
-        assert_eq!(PATTERN_SHORT_RESULT_COUNT, result.len());
-    });
-}
-
 fn short_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -86,6 +65,7 @@ fn short_bmb(bencher: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "character")]
 fn short_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -99,7 +79,11 @@ fn short_character(bencher: &mut Bencher) {
     });
 }
 
-benchmark_group!(short, short_naive, short_regex, short_bm, short_horspool, short_bmb, short_character);
+#[cfg(feature = "character")]
+benchmark_group!(short, short_naive, short_regex, short_bmb, short_character);
+
+#[cfg(not(feature = "character"))]
+benchmark_group!(short, short_naive, short_regex, short_bmb);
 
 
 fn long_naive(bencher: &mut Bencher) {
@@ -122,26 +106,6 @@ fn long_regex(bencher: &mut Bencher) {
     });
 }
 
-fn long_bm(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = bm_search(&text, PATTERN_LONG);
-
-        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-    });
-}
-
-fn long_horspool(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = horspool_search(&text, PATTERN_LONG);
-
-        assert_eq!(PATTERN_LONG_RESULT_COUNT, result.len());
-    });
-}
-
 fn long_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -152,6 +116,7 @@ fn long_bmb(bencher: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "character")]
 fn long_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -165,7 +130,11 @@ fn long_character(bencher: &mut Bencher) {
     });
 }
 
-benchmark_group!(long, long_naive, long_regex, long_bm, long_horspool, long_bmb, long_character);
+#[cfg(feature = "character")]
+benchmark_group!(long, long_naive, long_regex, long_bmb, long_character);
+
+#[cfg(not(feature = "character"))]
+benchmark_group!(long, long_naive, long_regex, long_bmb);
 
 fn not_exist_short_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
@@ -187,26 +156,6 @@ fn not_exist_short_regex(bencher: &mut Bencher) {
     });
 }
 
-fn not_exist_short_bm(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = bm_search(&text, NOT_EXIST_PATTERN_SHORT);
-
-        assert_eq!(0, result.len());
-    });
-}
-
-fn not_exist_short_horspool(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = horspool_search(&text, NOT_EXIST_PATTERN_SHORT);
-
-        assert_eq!(0, result.len());
-    });
-}
-
 fn not_exist_short_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -217,6 +166,7 @@ fn not_exist_short_bmb(bencher: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "character")]
 fn not_exist_short_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -230,7 +180,11 @@ fn not_exist_short_character(bencher: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "character")]
 benchmark_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bm, not_exist_short_horspool, not_exist_short_bmb, not_exist_short_character);
+
+#[cfg(not(feature = "character"))]
+benchmark_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bmb);
 
 fn not_exist_long_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
@@ -252,26 +206,6 @@ fn not_exist_long_regex(bencher: &mut Bencher) {
     });
 }
 
-fn not_exist_long_bm(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = bm_search(&text, NOT_EXIST_PATTERN_LONG);
-
-        assert_eq!(0, result.len());
-    });
-}
-
-fn not_exist_long_horspool(bencher: &mut Bencher) {
-    let text = fs::read_to_string(TXT_PATH).unwrap();
-
-    bencher.iter(|| {
-        let result = horspool_search(&text, NOT_EXIST_PATTERN_LONG);
-
-        assert_eq!(0, result.len());
-    });
-}
-
 fn not_exist_long_bmb(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -282,6 +216,7 @@ fn not_exist_long_bmb(bencher: &mut Bencher) {
     });
 }
 
+#[cfg(feature = "character")]
 fn not_exist_long_character(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
 
@@ -295,6 +230,10 @@ fn not_exist_long_character(bencher: &mut Bencher) {
     });
 }
 
-benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bm, not_exist_long_horspool, not_exist_long_bmb, not_exist_long_character);
+#[cfg(feature = "character")]
+benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bmb, not_exist_long_character);
+
+#[cfg(not(feature = "character"))]
+benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bmb);
 
 benchmark_main!(short, long, not_exist_short, not_exist_long);

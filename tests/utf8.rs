@@ -1,7 +1,5 @@
 extern crate boyer_moore_magiclen;
 
-extern crate needle;
-
 mod lib;
 
 use boyer_moore_magiclen::*;
