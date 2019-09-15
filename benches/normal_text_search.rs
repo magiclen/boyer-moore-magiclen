@@ -29,7 +29,8 @@ of the ship they had seen and mass as undetermined.";
 const PATTERN_LONG_RESULT_COUNT: usize = 1;
 
 const NOT_EXIST_PATTERN_SHORT: &'static str = "xyz";
-const NOT_EXIST_PATTERN_LONG: &'static str = "xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
+const NOT_EXIST_PATTERN_LONG: &'static str =
+    "xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
@@ -84,7 +85,6 @@ benchmark_group!(short, short_naive, short_regex, short_bmb, short_character);
 
 #[cfg(not(feature = "character"))]
 benchmark_group!(short, short_naive, short_regex, short_bmb);
-
 
 fn long_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
@@ -181,10 +181,21 @@ fn not_exist_short_character(bencher: &mut Bencher) {
 }
 
 #[cfg(feature = "character")]
-benchmark_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bmb, not_exist_short_character);
+benchmark_group!(
+    not_exist_short,
+    not_exist_short_naive,
+    not_exist_short_regex,
+    not_exist_short_bmb,
+    not_exist_short_character
+);
 
 #[cfg(not(feature = "character"))]
-benchmark_group!(not_exist_short, not_exist_short_naive, not_exist_short_regex, not_exist_short_bmb);
+benchmark_group!(
+    not_exist_short,
+    not_exist_short_naive,
+    not_exist_short_regex,
+    not_exist_short_bmb
+);
 
 fn not_exist_long_naive(bencher: &mut Bencher) {
     let text = fs::read_to_string(TXT_PATH).unwrap();
@@ -231,7 +242,13 @@ fn not_exist_long_character(bencher: &mut Bencher) {
 }
 
 #[cfg(feature = "character")]
-benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bmb, not_exist_long_character);
+benchmark_group!(
+    not_exist_long,
+    not_exist_long_naive,
+    not_exist_long_regex,
+    not_exist_long_bmb,
+    not_exist_long_character
+);
 
 #[cfg(not(feature = "character"))]
 benchmark_group!(not_exist_long, not_exist_long_naive, not_exist_long_regex, not_exist_long_bmb);

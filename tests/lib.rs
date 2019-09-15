@@ -5,7 +5,13 @@ use std::path::Path;
 use scanner_rust::Scanner;
 
 #[allow(dead_code)]
-pub(crate) fn data_input_from_file<P: AsRef<Path>, F: Fn(&str, &str, Vec<usize>, Vec<usize>, Vec<usize>)>(p: P, f: F) {
+pub(crate) fn data_input_from_file<
+    P: AsRef<Path>,
+    F: Fn(&str, &str, Vec<usize>, Vec<usize>, Vec<usize>),
+>(
+    p: P,
+    f: F,
+) {
     let mut sc = Scanner::scan_path(p).unwrap();
 
     let pattern_count = sc.next_usize().unwrap().unwrap();

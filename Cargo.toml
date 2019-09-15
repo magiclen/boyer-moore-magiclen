@@ -1,13 +1,13 @@
 [package]
 name = "boyer-moore-magiclen"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/boyer-moore-magiclen"
 homepage = "https://magiclen.org/rust-boyer-moore-magiclen"
 keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search", "string", "search"]
 categories = ["no-std", "algorithms"]
-description= "Boyer-Moore-MagicLen, a fast string search algorithm implemented in Rust."
+description = "Boyer-Moore-MagicLen, a fast string search algorithm implemented in Rust."
 readme = "README.md"
 license = "MIT"
 

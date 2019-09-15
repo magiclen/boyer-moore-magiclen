@@ -1,21 +1,19 @@
-use alloc::fmt::{self, Formatter, Debug};
+use alloc::fmt::{self, Debug, Formatter};
 
-use core::slice::Iter;
 use core::ops::Deref;
+use core::slice::Iter;
 
 use alloc::string::String;
 use alloc::vec::Vec;
 
 // TODO Searchable
 
+#[allow(clippy::len_without_is_empty)]
 pub trait BMByteSearchable {
-    #[inline]
     fn len(&self) -> usize;
 
-    #[inline]
     fn value_at(&self, index: usize) -> u8;
 
-    #[inline]
     fn iter(&self) -> Iter<u8>;
 }
 
@@ -44,9 +42,7 @@ impl<'a> BMByteSearchable for &str {
 
     #[inline]
     fn value_at(&self, index: usize) -> u8 {
-        unsafe {
-            (*(*self as *const str as *const [u8]))[index]
-        }
+        unsafe { (*(*self as *const str as *const [u8]))[index] }
     }
 
     #[inline]
@@ -109,7 +105,7 @@ impl<T: BMByteSearchable> BMByteSearchable for &T {
 // TODO BasCharShiftMap
 
 pub struct BMByteBadCharShiftMap {
-    t: [usize; 256]
+    t: [usize; 256],
 }
 
 impl Debug for BMByteBadCharShiftMap {
@@ -129,7 +125,7 @@ impl Deref for BMByteBadCharShiftMap {
 }
 
 pub struct BMByteBadCharShiftMapRev {
-    t: [usize; 256]
+    t: [usize; 256],
 }
 
 impl Debug for BMByteBadCharShiftMapRev {
@@ -149,7 +145,9 @@ impl Deref for BMByteBadCharShiftMapRev {
 }
 
 impl BMByteBadCharShiftMap {
-    pub fn create_bad_char_shift_map<T: BMByteSearchable>(pattern: T) -> Option<BMByteBadCharShiftMap> {
+    pub fn create_bad_char_shift_map<T: BMByteSearchable>(
+        pattern: T,
+    ) -> Option<BMByteBadCharShiftMap> {
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -165,13 +163,15 @@ impl BMByteBadCharShiftMap {
         }
 
         Some(BMByteBadCharShiftMap {
-            t: bad_char_shift_map
+            t: bad_char_shift_map,
         })
     }
 }
 
 impl BMByteBadCharShiftMapRev {
-    pub fn create_bad_char_shift_map<T: BMByteSearchable>(pattern: T) -> Option<BMByteBadCharShiftMapRev> {
+    pub fn create_bad_char_shift_map<T: BMByteSearchable>(
+        pattern: T,
+    ) -> Option<BMByteBadCharShiftMapRev> {
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -182,12 +182,14 @@ impl BMByteBadCharShiftMapRev {
 
         let mut bad_char_shift_map = [pattern_len; 256];
 
-        for (i, c) in pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize)) {
+        for (i, c) in
+            pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize))
+        {
             bad_char_shift_map[c] = i;
         }
 
         Some(BMByteBadCharShiftMapRev {
-            t: bad_char_shift_map
+            t: bad_char_shift_map,
         })
     }
 }
@@ -219,7 +221,7 @@ impl BMByte {
         Some(BMByte {
             bad_char_shift_map,
             bad_char_shift_map_rev,
-            pattern: pattern.iter().map(|&b| b).collect(),
+            pattern: pattern.iter().copied().collect(),
         })
     }
 }
@@ -290,7 +292,12 @@ impl BMByte {
     }
 }
 
-pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMap, limit: usize) -> Vec<usize> {
+pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
+    text: TT,
+    pattern: TP,
+    bad_char_shift_map: &BMByteBadCharShiftMap,
+    limit: usize,
+) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -315,17 +322,15 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: 
                 if p == text_len {
                     break 'outer;
                 }
-                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max(
-                    {
-                        let c = text.value_at(p);
+                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
+                    let c = text.value_at(p);
 
-                        if c == last_pattern_char {
-                            1
-                        } else {
-                            bad_char_shift_map[c as usize] + 1
-                        }
+                    if c == last_pattern_char {
+                        1
+                    } else {
+                        bad_char_shift_map[c as usize] + 1
                     }
-                );
+                });
                 if shift > end_index {
                     break 'outer;
                 }
@@ -342,17 +347,15 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: 
             break;
         }
 
-        shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max(
-            {
-                let c = text.value_at(shift + pattern_len);
+        shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
+            let c = text.value_at(shift + pattern_len);
 
-                if c == last_pattern_char {
-                    1
-                } else {
-                    bad_char_shift_map[c as usize] + 1
-                }
+            if c == last_pattern_char {
+                1
+            } else {
+                bad_char_shift_map[c as usize] + 1
             }
-        );
+        });
         if shift > end_index {
             break;
         }
@@ -361,7 +364,12 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: 
     result
 }
 
-pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMapRev, limit: usize) -> Vec<usize> {
+pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
+    text: TT,
+    pattern: TP,
+    bad_char_shift_map: &BMByteBadCharShiftMapRev,
+    limit: usize,
+) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -385,17 +393,15 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern:
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max(
-                    {
-                        let c = text.value_at(shift - pattern_len);
+                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+                    let c = text.value_at(shift - pattern_len);
 
-                        if c == first_pattern_char {
-                            1
-                        } else {
-                            bad_char_shift_map[c as usize] + 1
-                        }
+                    if c == first_pattern_char {
+                        1
+                    } else {
+                        bad_char_shift_map[c as usize] + 1
                     }
-                );
+                });
                 if shift < start_index {
                     break 'outer;
                 }
@@ -412,23 +418,21 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern:
             break;
         }
 
-        shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max(
-            {
-                let c = text.value_at(shift - pattern_len);
+        shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+            let c = text.value_at(shift - pattern_len);
 
-                if c == first_pattern_char {
-                    1
-                } else {
-                    let s = bad_char_shift_map[c as usize] + 1;
+            if c == first_pattern_char {
+                1
+            } else {
+                let s = bad_char_shift_map[c as usize] + 1;
 
-                    if shift < s {
-                        break;
-                    }
-
-                    s
+                if shift < s {
+                    break;
                 }
+
+                s
             }
-        );
+        });
         if shift < start_index {
             break;
         }
@@ -467,7 +471,7 @@ impl BMByte {
     /// assert_eq!(Some(1), bmb.find_first_in("coocoocoocoo"));
     /// ```
     pub fn find_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).map(|&p| p)
+        find(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -514,7 +518,7 @@ impl BMByte {
     /// assert_eq!(Some(7), bmb.rfind_first_in("coocoocoocoo"));
     /// ```
     pub fn rfind_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).map(|&p| p)
+        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -533,7 +537,12 @@ impl BMByte {
     }
 }
 
-pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMap, limit: usize) -> Vec<usize> {
+pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
+    text: TT,
+    pattern: TP,
+    bad_char_shift_map: &BMByteBadCharShiftMap,
+    limit: usize,
+) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -558,17 +567,15 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, b
                 if p == text_len {
                     break 'outer;
                 }
-                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max(
-                    {
-                        let c = text.value_at(p);
+                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
+                    let c = text.value_at(p);
 
-                        if c == last_pattern_char {
-                            1
-                        } else {
-                            bad_char_shift_map[c as usize] + 1
-                        }
+                    if c == last_pattern_char {
+                        1
+                    } else {
+                        bad_char_shift_map[c as usize] + 1
                     }
-                );
+                });
                 if shift > end_index {
                     break 'outer;
                 }
@@ -594,7 +601,12 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, b
     result
 }
 
-pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, bad_char_shift_map: &BMByteBadCharShiftMapRev, limit: usize) -> Vec<usize> {
+pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
+    text: TT,
+    pattern: TP,
+    bad_char_shift_map: &BMByteBadCharShiftMapRev,
+    limit: usize,
+) -> Vec<usize> {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -618,17 +630,15 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP, 
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max(
-                    {
-                        let c = text.value_at(shift - pattern_len);
+                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+                    let c = text.value_at(shift - pattern_len);
 
-                        if c == first_pattern_char {
-                            1
-                        } else {
-                            bad_char_shift_map[c as usize] + 1
-                        }
+                    if c == first_pattern_char {
+                        1
+                    } else {
+                        bad_char_shift_map[c as usize] + 1
                     }
-                );
+                });
                 if shift < start_index {
                     break 'outer;
                 }
