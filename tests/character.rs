@@ -6,7 +6,7 @@ mod lib;
 
 use boyer_moore_magiclen::*;
 
-const INPUT_DATA_PATH: &'static str = r"tests/data/character.txt";
+const INPUT_DATA_PATH: &str = r"tests/data/character.txt";
 
 #[test]
 fn data_input_from_file() {
@@ -20,7 +20,7 @@ fn data_input_from_file() {
 
             assert_eq!(answer.clone(), bm.find_full_all_in(&text));
             assert_eq!(
-                answer.iter().rev().map(|&n| n).collect::<Vec<usize>>(),
+                answer.iter().rev().copied().collect::<Vec<usize>>(),
                 bm.rfind_full_all_in(&text)
             );
             assert_eq!(answer_not_full.clone(), bm.find_all_in(&text));
