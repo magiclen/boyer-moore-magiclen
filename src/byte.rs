@@ -51,7 +51,7 @@ impl BMByteSearchable for &str {
     }
 }
 
-impl BMByteSearchable for dyn Deref<Target=[u8]> {
+impl BMByteSearchable for dyn Deref<Target = [u8]> {
     #[inline]
     fn len(&self) -> usize {
         <[u8]>::len(self)
@@ -183,7 +183,7 @@ impl BMByteBadCharShiftMapRev {
         let mut bad_char_shift_map = [pattern_len; 256];
 
         for (i, c) in
-        pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize))
+            pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize))
         {
             bad_char_shift_map[c] = i;
         }

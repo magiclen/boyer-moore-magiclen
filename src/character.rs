@@ -16,7 +16,7 @@ pub trait BMCharacterSearchable {
     fn iter(&self) -> Iter<char>;
 }
 
-impl BMCharacterSearchable for dyn Deref<Target=[char]> {
+impl BMCharacterSearchable for dyn Deref<Target = [char]> {
     #[inline]
     fn len(&self) -> usize {
         <[char]>::len(self)
