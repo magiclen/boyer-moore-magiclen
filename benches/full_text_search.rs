@@ -185,8 +185,6 @@ benchmark_group!(
     not_exist_short,
     not_exist_short_naive,
     not_exist_short_regex,
-    not_exist_short_bm,
-    not_exist_short_horspool,
     not_exist_short_bmb,
     not_exist_short_character
 );

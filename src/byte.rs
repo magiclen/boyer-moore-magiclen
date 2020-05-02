@@ -17,7 +17,7 @@ pub trait BMByteSearchable {
     fn iter(&self) -> Iter<u8>;
 }
 
-impl<'a> BMByteSearchable for String {
+impl BMByteSearchable for String {
     #[inline]
     fn len(&self) -> usize {
         String::len(&self)
@@ -34,7 +34,7 @@ impl<'a> BMByteSearchable for String {
     }
 }
 
-impl<'a> BMByteSearchable for &str {
+impl BMByteSearchable for &str {
     #[inline]
     fn len(&self) -> usize {
         str::len(&self)
@@ -51,7 +51,7 @@ impl<'a> BMByteSearchable for &str {
     }
 }
 
-impl<'a> BMByteSearchable for [u8] {
+impl BMByteSearchable for dyn Deref<Target=[u8]> {
     #[inline]
     fn len(&self) -> usize {
         <[u8]>::len(self)
@@ -68,7 +68,7 @@ impl<'a> BMByteSearchable for [u8] {
     }
 }
 
-impl<'a> BMByteSearchable for Vec<u8> {
+impl BMByteSearchable for Vec<u8> {
     #[inline]
     fn len(&self) -> usize {
         Vec::len(&self)
@@ -183,7 +183,7 @@ impl BMByteBadCharShiftMapRev {
         let mut bad_char_shift_map = [pattern_len; 256];
 
         for (i, c) in
-            pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize))
+        pattern.iter().enumerate().rev().take(pattern_len_dec).map(|(i, &c)| (i, c as usize))
         {
             bad_char_shift_map[c] = i;
         }
