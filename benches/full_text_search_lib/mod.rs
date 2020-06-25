@@ -1,7 +1,6 @@
 extern crate boyer_moore_magiclen;
 extern crate regex;
-
-mod utf8_width;
+extern crate utf8_width;
 
 use self::boyer_moore_magiclen::*;
 use self::regex::Regex;
@@ -16,7 +15,8 @@ pub fn naive_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<us
 
     let mut offset = 0;
 
-    let pattern_first_char_width = utf8_width::utf8_char_width(pattern.as_bytes()[0]);
+    let pattern_first_char_width =
+        unsafe { utf8_width::get_width_assume_valid(pattern.as_bytes()[0]) };
 
     while offset < length {
         if let Some(index) = text[offset..].find(pattern) {
@@ -45,7 +45,8 @@ pub fn regex_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<us
 
     let mut offset = 0;
 
-    let pattern_first_char_width = utf8_width::utf8_char_width(pattern.as_bytes()[0]);
+    let pattern_first_char_width =
+        unsafe { utf8_width::get_width_assume_valid(pattern.as_bytes()[0]) };
 
     while offset < length {
         if let Some(m) = regex.find(&text[offset..]) {
