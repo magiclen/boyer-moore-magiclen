@@ -111,7 +111,7 @@ impl BMCharacterBadCharShiftMap {
 
         let mut bad_char_shift_map: HashMap<char, usize> = HashMap::with_capacity(pattern_len_dec);
 
-        for (i, &c) in pattern.iter().take(pattern_len_dec).enumerate() {
+        for (i, c) in pattern.iter().copied().take(pattern_len_dec).enumerate() {
             bad_char_shift_map.insert(c, pattern_len_dec - i);
         }
 
@@ -135,7 +135,7 @@ impl BMCharacterBadCharShiftMapRev {
 
         let mut bad_char_shift_map: HashMap<char, usize> = HashMap::with_capacity(pattern_len_dec);
 
-        for (i, &c) in pattern.iter().enumerate().rev().take(pattern_len_dec) {
+        for (i, c) in pattern.iter().copied().enumerate().rev().take(pattern_len_dec) {
             bad_char_shift_map.insert(c, i);
         }
 
@@ -281,7 +281,7 @@ pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate().rev() {
+        for (i, pc) in pattern.iter().copied().enumerate().rev() {
             if text.value_at(shift + i) != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
@@ -362,7 +362,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate() {
+        for (i, pc) in pattern.iter().copied().enumerate() {
             if text.value_at(shift - pattern_len_dec + i) != pc {
                 if shift < pattern_len {
                     break 'outer;
@@ -562,7 +562,7 @@ pub fn find<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate().rev() {
+        for (i, pc) in pattern.iter().copied().enumerate().rev() {
             if text.value_at(shift + i) != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
@@ -631,7 +631,7 @@ pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate() {
+        for (i, pc) in pattern.iter().copied().enumerate() {
             if text.value_at(shift - pattern_len_dec + i) != pc {
                 if shift < pattern_len {
                     break 'outer;

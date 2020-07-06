@@ -316,7 +316,7 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate().rev() {
+        for (i, pc) in pattern.iter().copied().enumerate().rev() {
             if text.value_at(shift + i) != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
@@ -388,7 +388,7 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate() {
+        for (i, pc) in pattern.iter().copied().enumerate() {
             if text.value_at(shift - pattern_len_dec + i) != pc {
                 if shift < pattern_len {
                     break 'outer;
@@ -561,7 +561,7 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate().rev() {
+        for (i, pc) in pattern.iter().copied().enumerate().rev() {
             if text.value_at(shift + i) != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
@@ -625,7 +625,7 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, &pc) in pattern.iter().enumerate() {
+        for (i, pc) in pattern.iter().copied().enumerate() {
             if text.value_at(shift - pattern_len_dec + i) != pc {
                 if shift < pattern_len {
                     break 'outer;
