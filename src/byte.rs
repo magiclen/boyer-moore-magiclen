@@ -393,7 +393,7 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+                let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
                     let c = text.value_at(shift - pattern_len);
 
                     if c == first_pattern_char {
@@ -402,6 +402,10 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
                         bad_char_shift_map[c as usize] + 1
                     }
                 });
+                if shift < s {
+                    break 'outer;
+                }
+                shift -= s;
                 if shift < start_index {
                     break 'outer;
                 }
@@ -418,7 +422,7 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
             break;
         }
 
-        shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+        let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
             let c = text.value_at(shift - pattern_len);
 
             if c == first_pattern_char {
@@ -433,6 +437,10 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
                 s
             }
         });
+        if shift < s {
+            break;
+        }
+        shift -= s;
         if shift < start_index {
             break;
         }
@@ -630,7 +638,7 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
+                let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
                     let c = text.value_at(shift - pattern_len);
 
                     if c == first_pattern_char {
@@ -639,6 +647,10 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
                         bad_char_shift_map[c as usize] + 1
                     }
                 });
+                if shift < s {
+                    break 'outer;
+                }
+                shift -= s;
                 if shift < start_index {
                     break 'outer;
                 }

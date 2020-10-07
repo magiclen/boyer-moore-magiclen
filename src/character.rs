@@ -367,7 +367,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map
+                let s = bad_char_shift_map
                     .get(&text.value_at(shift - pattern_len_dec))
                     .copied()
                     .unwrap_or(pattern_len)
@@ -380,6 +380,10 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                             bad_char_shift_map.get(&c).map(|&c| c + 1).unwrap_or(pattern_len_inc)
                         }
                     });
+                if shift < s {
+                    break 'outer;
+                }
+                shift -= s;
                 if shift < start_index {
                     break 'outer;
                 }
@@ -396,7 +400,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
             break;
         }
 
-        shift -= bad_char_shift_map
+        let s = bad_char_shift_map
             .get(&text.value_at(shift - pattern_len_dec))
             .copied()
             .unwrap_or(pattern_len)
@@ -415,6 +419,10 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                     s
                 }
             });
+        if shift < s {
+            break 'outer;
+        }
+        shift -= s;
         if shift < start_index {
             break;
         }
@@ -636,7 +644,7 @@ pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                 if shift < pattern_len {
                     break 'outer;
                 }
-                shift -= bad_char_shift_map
+                let s = bad_char_shift_map
                     .get(&text.value_at(shift - pattern_len_dec))
                     .copied()
                     .unwrap_or(pattern_len)
@@ -649,6 +657,10 @@ pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                             bad_char_shift_map.get(&c).map(|&c| c + 1).unwrap_or(pattern_len_inc)
                         }
                     });
+                if shift < s {
+                    break 'outer;
+                }
+                shift -= s;
                 if shift < start_index {
                     break 'outer;
                 }
