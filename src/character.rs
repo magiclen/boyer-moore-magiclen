@@ -414,7 +414,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                 }
             });
         if shift < s {
-            break 'outer;
+            break;
         }
         shift -= s;
         if shift < start_index {

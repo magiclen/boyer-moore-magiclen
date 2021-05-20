@@ -428,13 +428,7 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
             if c == first_pattern_char {
                 1
             } else {
-                let s = bad_char_shift_map[c as usize] + 1;
-
-                if shift < s {
-                    break;
-                }
-
-                s
+                bad_char_shift_map[c as usize] + 1
             }
         });
         if shift < s {
