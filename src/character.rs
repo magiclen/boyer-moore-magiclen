@@ -410,13 +410,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
                 if c == first_pattern_char {
                     1
                 } else {
-                    let s = bad_char_shift_map.get(&c).map(|&c| c + 1).unwrap_or(pattern_len_inc);
-
-                    if shift < s {
-                        break;
-                    }
-
-                    s
+                    bad_char_shift_map.get(&c).map(|&c| c + 1).unwrap_or(pattern_len_inc)
                 }
             });
         if shift < s {
