@@ -1,5 +1,3 @@
-extern crate scanner_rust;
-
 use std::path::Path;
 
 use scanner_rust::Scanner;

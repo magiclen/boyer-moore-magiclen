@@ -14,8 +14,6 @@ Every `BMXXX` has a `from` associated function to create the instance by a searc
 For example,
 
 ```rust
-extern crate boyer_moore_magiclen;
-
 use boyer_moore_magiclen::BMByte;
 
 let bmb = BMByte::from("oocoo").unwrap();
@@ -26,8 +24,6 @@ Now, we can search any binary data or UTF-8 data for the pattern `oocoo`.
 There are two search modes and two search directions. The first mode is called **full text search**, which finds the positions of the matched sub-sequences including the overlapping ones.
 
 ```rust
-extern crate boyer_moore_magiclen;
-
 use boyer_moore_magiclen::BMByte;
 
 let bmb = BMByte::from("oocoo").unwrap();
@@ -38,8 +34,6 @@ assert_eq!(vec![1, 4], bmb.find_full_in("coocoocoocoo", 2));
 The other mode is called **normal text search**, which finds the positions of the matched sub-sequences excluding the overlapping ones.
 
 ```rust
-extern crate boyer_moore_magiclen;
-
 use boyer_moore_magiclen::BMByte;
 
 let bmb = BMByte::from("oocoo").unwrap();
@@ -50,8 +44,6 @@ assert_eq!(vec![1, 7], bmb.find_in("coocoocoocoo", 2));
 The search direction can be from the head (searching forward, `find_xxx`) or from the tail (searching backward, `rfind_xxx`).
 
 ```rust
-extern crate boyer_moore_magiclen;
-
 use boyer_moore_magiclen::BMByte;
 
 let bmb = BMByte::from("oocoo").unwrap();
@@ -62,8 +54,6 @@ assert_eq!(vec![7, 1], bmb.rfind_in("coocoocoocoo", 2));
 To search all results at a time, use the `find_all_in`, `rfind_all_in`, `find_full_all_in` or `rfind_full_all_in` method.
 
 ```rust
-extern crate boyer_moore_magiclen;
-
 use boyer_moore_magiclen::BMByte;
 
 let bmb = BMByte::from("oocoo").unwrap();
@@ -74,13 +64,13 @@ assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
 ## Benchmark
 
 ```bash
-cargo +nightly bench --bench full_text_search
+cargo bench --bench full_text_search
 ```
 
 or
 
 ```bash
-cargo +nightly bench --bench normal_text_search
+cargo bench --bench normal_text_search
 ```
 
 ## Crates.io

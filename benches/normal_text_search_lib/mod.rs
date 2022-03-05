@@ -1,8 +1,5 @@
-extern crate boyer_moore_magiclen;
-extern crate regex;
-
-use self::boyer_moore_magiclen::*;
-use self::regex::Regex;
+use boyer_moore_magiclen::*;
+use regex::Regex;
 
 pub fn naive_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<usize> {
     let text = text.as_ref();
@@ -34,7 +31,7 @@ pub fn regex_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<us
     let text = text.as_ref();
     let pattern = pattern.as_ref();
 
-    let regex = Regex::new(&format!("{}", regex::escape(pattern))).unwrap();
+    let regex = Regex::new(regex::escape(pattern).as_str()).unwrap();
 
     let length = text.len();
     let pattern_length = pattern.len();

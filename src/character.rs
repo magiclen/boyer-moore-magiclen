@@ -36,7 +36,7 @@ impl BMCharacterSearchable for dyn Deref<Target = [char]> {
 impl BMCharacterSearchable for Vec<char> {
     #[inline]
     fn len(&self) -> usize {
-        Vec::len(&self)
+        Vec::len(self)
     }
 
     #[inline]
@@ -159,8 +159,6 @@ impl BMCharacter {
     /// Create a `BMByte` instance from a pattern (the search needle).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -184,8 +182,6 @@ impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -202,8 +198,6 @@ impl BMCharacter {
     /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -222,8 +216,6 @@ impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -240,8 +232,6 @@ impl BMCharacter {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -431,8 +421,6 @@ impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -449,8 +437,6 @@ impl BMCharacter {
     /// Find and return the position of the first matched sub-sequence in any text (the haystack).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -467,8 +453,6 @@ impl BMCharacter {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -487,8 +471,6 @@ impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -505,8 +487,6 @@ impl BMCharacter {
     /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
@@ -523,8 +503,6 @@ impl BMCharacter {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMCharacter;
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();

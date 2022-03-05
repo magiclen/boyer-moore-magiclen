@@ -20,7 +20,7 @@ pub trait BMByteSearchable {
 impl BMByteSearchable for String {
     #[inline]
     fn len(&self) -> usize {
-        String::len(&self)
+        String::len(self)
     }
 
     #[inline]
@@ -37,7 +37,7 @@ impl BMByteSearchable for String {
 impl BMByteSearchable for &str {
     #[inline]
     fn len(&self) -> usize {
-        str::len(&self)
+        str::len(self)
     }
 
     #[inline]
@@ -71,7 +71,7 @@ impl BMByteSearchable for dyn Deref<Target = [u8]> {
 impl BMByteSearchable for Vec<u8> {
     #[inline]
     fn len(&self) -> usize {
-        Vec::len(&self)
+        Vec::len(self)
     }
 
     #[inline]
@@ -111,7 +111,7 @@ pub struct BMByteBadCharShiftMap {
 impl Debug for BMByteBadCharShiftMap {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(BMByteBadCharShiftMap, f, self, let .t = self.t.as_ref());
+        debug_helper::impl_debug_for_struct!(BMByteBadCharShiftMap, f, self, let .t = self.t.as_ref());
     }
 }
 
@@ -131,7 +131,7 @@ pub struct BMByteBadCharShiftMapRev {
 impl Debug for BMByteBadCharShiftMapRev {
     #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(BMByteBadCharShiftMapRev, f, self, let .t = self.t.as_ref());
+        debug_helper::impl_debug_for_struct!(BMByteBadCharShiftMapRev, f, self, let .t = self.t.as_ref());
     }
 }
 
@@ -208,8 +208,6 @@ impl BMByte {
     /// Create a `BMByte` instance from a pattern (the needle).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -232,8 +230,6 @@ impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -247,8 +243,6 @@ impl BMByte {
     /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -264,8 +258,6 @@ impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -279,8 +271,6 @@ impl BMByte {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -449,8 +439,6 @@ impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -464,8 +452,6 @@ impl BMByte {
     /// Find and return the position of the first matched sub-sequence in any text (the haystack).
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -479,8 +465,6 @@ impl BMByte {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -496,8 +480,6 @@ impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -511,8 +493,6 @@ impl BMByte {
     /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
@@ -526,8 +506,6 @@ impl BMByte {
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
     ///
     /// ```
-    /// extern crate boyer_moore_magiclen;
-    ///
     /// use boyer_moore_magiclen::BMByte;
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();

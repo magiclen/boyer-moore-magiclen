@@ -1,8 +1,8 @@
 [package]
 name = "boyer-moore-magiclen"
-version = "0.2.14"
+version = "0.2.15"
 authors = ["Magic Len <len@magiclen.org>"]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/magiclen/boyer-moore-magiclen"
 homepage = "https://magiclen.org/rust-boyer-moore-magiclen"
 keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search", "string", "search"]

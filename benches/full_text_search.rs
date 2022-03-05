@@ -1,26 +1,21 @@
-extern crate boyer_moore_magiclen;
-#[macro_use]
-extern crate bencher;
-extern crate regex;
-
 mod full_text_search_lib;
 
 use std::fs;
 
-use bencher::Bencher;
+use bencher::{benchmark_group, benchmark_main, Bencher};
 
 use full_text_search_lib::*;
 
 #[cfg(windows)]
-const TXT_PATH: &'static str = r"benches\data\vgilante.txt";
+const TXT_PATH: &str = r"benches\data\vgilante.txt";
 
 #[cfg(not(windows))]
-const TXT_PATH: &'static str = r"benches/data/vgilante.txt";
+const TXT_PATH: &str = r"benches/data/vgilante.txt";
 
-const PATTERN_SHORT: &'static str = "the";
+const PATTERN_SHORT: &str = "the";
 const PATTERN_SHORT_RESULT_COUNT: usize = 5034;
 
-const PATTERN_LONG: &'static str = "Half the screen showed a graphic representation of what the
+const PATTERN_LONG: &str = "Half the screen showed a graphic representation of what the
 scanners had picked up the other side showed an analysis of the
 same data.  The graphics showed an irregular shaped lump fade
 on, stay several frames, then fade out.  At the time the lump
@@ -28,9 +23,8 @@ reminded on screen the analysis showed size about a quarter that
 of the ship they had seen and mass as undetermined.";
 const PATTERN_LONG_RESULT_COUNT: usize = 1;
 
-const NOT_EXIST_PATTERN_SHORT: &'static str = "xyz";
-const NOT_EXIST_PATTERN_LONG: &'static str =
-    "xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
+const NOT_EXIST_PATTERN_SHORT: &str = "xyz";
+const NOT_EXIST_PATTERN_LONG: &str = "xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
 xyzabcdefghijklmnopqrstuvwzyz xyzabcdefghijklmnopqrstuvwzyz
