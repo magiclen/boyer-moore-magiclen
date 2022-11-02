@@ -447,7 +447,7 @@ impl BMCharacter {
     /// );
     /// ```
     pub fn find_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 1).get(0).copied()
+        find(text, &self.pattern, &self.bad_char_shift_map, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -497,7 +497,7 @@ impl BMCharacter {
     /// );
     /// ```
     pub fn rfind_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).get(0).copied()
+        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
