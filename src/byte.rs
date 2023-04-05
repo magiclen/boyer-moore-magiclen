@@ -1,10 +1,9 @@
-use alloc::fmt::{self, Debug, Formatter};
-
-use core::ops::Deref;
-use core::slice::Iter;
-
-use alloc::string::String;
-use alloc::vec::Vec;
+use alloc::{
+    fmt::{self, Debug, Formatter},
+    string::String,
+    vec::Vec,
+};
+use core::{ops::Deref, slice::Iter};
 
 // TODO Searchable
 
@@ -163,7 +162,7 @@ impl BMByteBadCharShiftMap {
         }
 
         Some(BMByteBadCharShiftMap {
-            t: bad_char_shift_map,
+            t: bad_char_shift_map
         })
     }
 }
@@ -189,7 +188,7 @@ impl BMByteBadCharShiftMapRev {
         }
 
         Some(BMByteBadCharShiftMapRev {
-            t: bad_char_shift_map,
+            t: bad_char_shift_map
         })
     }
 }
@@ -199,9 +198,9 @@ impl BMByteBadCharShiftMapRev {
 /// Using Boyer-Moore-MagicLen to search byte sub-sequences in any byte sequence, including self-synchronizing string encoding data such as UTF-8.
 #[derive(Debug)]
 pub struct BMByte {
-    bad_char_shift_map: BMByteBadCharShiftMap,
+    bad_char_shift_map:     BMByteBadCharShiftMap,
     bad_char_shift_map_rev: BMByteBadCharShiftMapRev,
-    pattern: Vec<u8>,
+    pattern:                Vec<u8>,
 }
 
 impl BMByte {

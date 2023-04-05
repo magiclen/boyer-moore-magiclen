@@ -3,7 +3,6 @@ mod full_text_search_lib;
 use std::fs;
 
 use bencher::{benchmark_group, benchmark_main, Bencher};
-
 use full_text_search_lib::*;
 
 #[cfg(windows)]

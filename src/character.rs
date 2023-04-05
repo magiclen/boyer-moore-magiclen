@@ -1,9 +1,7 @@
 #![cfg(feature = "character")]
 
 use core::slice::Iter;
-
-use std::collections::HashMap;
-use std::ops::Deref;
+use std::{collections::HashMap, ops::Deref};
 
 // TODO Searchable
 
@@ -116,7 +114,7 @@ impl BMCharacterBadCharShiftMap {
         }
 
         Some(BMCharacterBadCharShiftMap {
-            t: bad_char_shift_map,
+            t: bad_char_shift_map
         })
     }
 }
@@ -140,7 +138,7 @@ impl BMCharacterBadCharShiftMapRev {
         }
 
         Some(BMCharacterBadCharShiftMapRev {
-            t: bad_char_shift_map,
+            t: bad_char_shift_map
         })
     }
 }
@@ -150,9 +148,9 @@ impl BMCharacterBadCharShiftMapRev {
 /// Using Boyer-Moore-MagicLen to search character sub-sequences in any character sequence.
 #[derive(Debug)]
 pub struct BMCharacter {
-    bad_char_shift_map: BMCharacterBadCharShiftMap,
+    bad_char_shift_map:     BMCharacterBadCharShiftMap,
     bad_char_shift_map_rev: BMCharacterBadCharShiftMapRev,
-    pattern: Vec<char>,
+    pattern:                Vec<char>,
 }
 
 impl BMCharacter {
@@ -188,7 +186,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![1, 4, 7],
-    ///     bmc.find_full_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.find_full_all_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn find_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
@@ -204,7 +204,10 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![1, 4],
-    ///     bmc.find_full_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 2)
+    ///     bmc.find_full_in(
+    ///         vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'],
+    ///         2
+    ///     )
     /// );
     /// ```
     pub fn find_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
@@ -222,7 +225,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![7, 4, 1],
-    ///     bmc.rfind_full_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.rfind_full_all_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn rfind_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
@@ -238,7 +243,10 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![7, 4],
-    ///     bmc.rfind_full_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 2)
+    ///     bmc.rfind_full_in(
+    ///         vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'],
+    ///         2
+    ///     )
     /// );
     /// ```
     pub fn rfind_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
@@ -427,7 +435,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![1, 7],
-    ///     bmc.find_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.find_all_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn find_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
@@ -443,7 +453,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     Some(1),
-    ///     bmc.find_first_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.find_first_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn find_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
@@ -459,7 +471,10 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![1],
-    ///     bmc.find_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 1)
+    ///     bmc.find_in(
+    ///         vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'],
+    ///         1
+    ///     )
     /// );
     /// ```
     pub fn find_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
@@ -477,7 +492,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![7, 1],
-    ///     bmc.rfind_all_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.rfind_all_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn rfind_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
@@ -493,7 +510,9 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     Some(7),
-    ///     bmc.rfind_first_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'])
+    ///     bmc.rfind_first_in(vec![
+    ///         'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'
+    ///     ])
     /// );
     /// ```
     pub fn rfind_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
@@ -509,7 +528,10 @@ impl BMCharacter {
     ///
     /// assert_eq!(
     ///     vec![7],
-    ///     bmc.rfind_in(vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'], 1)
+    ///     bmc.rfind_in(
+    ///         vec!['c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o', 'c', 'o', 'o'],
+    ///         1
+    ///     )
     /// );
     /// ```
     pub fn rfind_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
