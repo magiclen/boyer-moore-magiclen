@@ -9,7 +9,6 @@ homepage = "https://magiclen.org/rust-boyer-moore-magiclen"
 keywords = ["boyer-moore-magiclen", "boyer-moore-horspool", "quick-search", "string", "search"]
 categories = ["no-std", "algorithms"]
 description = "Boyer-Moore-MagicLen, a fast string search algorithm implemented in Rust."
-readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE", "benches/full_text_search.rs", "benches/normal_text_search.rs"]
 
