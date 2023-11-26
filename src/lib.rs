@@ -61,6 +61,7 @@ assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
 */
 
 #![cfg_attr(not(feature = "character"), no_std)]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 #[macro_use]
 extern crate alloc;
