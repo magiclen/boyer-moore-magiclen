@@ -1,67 +1,22 @@
 #![cfg(feature = "character")]
 
-use core::slice::Iter;
-use std::{collections::HashMap, ops::Deref};
+use std::{
+    collections::HashMap,
+    ops::{Deref, Index},
+};
 
+use crate::byte::LenTrait;
 // TODO Searchable
 
-#[allow(clippy::len_without_is_empty)]
-pub trait BMCharacterSearchable {
-    fn len(&self) -> usize;
-
-    fn value_at(&self, index: usize) -> char;
-
-    fn iter(&self) -> Iter<char>;
-}
-
-impl BMCharacterSearchable for dyn Deref<Target = [char]> {
-    #[inline]
+impl LenTrait for [char] {
     fn len(&self) -> usize {
-        <[char]>::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> char {
-        self[index]
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<char> {
-        <[char]>::iter(self)
+        self.len()
     }
 }
 
-impl BMCharacterSearchable for Vec<char> {
-    #[inline]
+impl LenTrait for Vec<char> {
     fn len(&self) -> usize {
-        Vec::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> char {
-        self[index]
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<char> {
-        self.as_slice().iter()
-    }
-}
-
-impl<T: BMCharacterSearchable> BMCharacterSearchable for &T {
-    #[inline]
-    fn len(&self) -> usize {
-        <dyn BMCharacterSearchable>::len(*self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> char {
-        <dyn BMCharacterSearchable>::value_at(*self, index)
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<char> {
-        <dyn BMCharacterSearchable>::iter(*self)
+        self.len()
     }
 }
 
@@ -96,9 +51,10 @@ impl Deref for BMCharacterBadCharShiftMapRev {
 }
 
 impl BMCharacterBadCharShiftMap {
-    pub fn create_bad_char_shift_map<T: BMCharacterSearchable>(
+    pub fn create_bad_char_shift_map<T: AsRef<[char]>>(
         pattern: T,
     ) -> Option<BMCharacterBadCharShiftMap> {
+        let pattern = pattern.as_ref();
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -109,7 +65,7 @@ impl BMCharacterBadCharShiftMap {
 
         let mut bad_char_shift_map: HashMap<char, usize> = HashMap::with_capacity(pattern_len_dec);
 
-        for (i, c) in pattern.iter().copied().take(pattern_len_dec).enumerate() {
+        for (i, c) in pattern.as_ref().iter().copied().take(pattern_len_dec).enumerate() {
             bad_char_shift_map.insert(c, pattern_len_dec - i);
         }
 
@@ -120,9 +76,10 @@ impl BMCharacterBadCharShiftMap {
 }
 
 impl BMCharacterBadCharShiftMapRev {
-    pub fn create_bad_char_shift_map<T: BMCharacterSearchable>(
+    pub fn create_bad_char_shift_map<T: AsRef<[char]>>(
         pattern: T,
     ) -> Option<BMCharacterBadCharShiftMapRev> {
+        let pattern = pattern.as_ref();
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -161,7 +118,7 @@ impl BMCharacter {
     ///
     /// let bmc = BMCharacter::from(vec!['o', 'o', 'c', 'o', 'o']).unwrap();
     /// ```
-    pub fn from<T: BMCharacterSearchable>(pattern: T) -> Option<BMCharacter> {
+    pub fn from<T: AsRef<[char]>>(pattern: T) -> Option<BMCharacter> {
         let bad_char_shift_map = BMCharacterBadCharShiftMap::create_bad_char_shift_map(&pattern)?;
         let bad_char_shift_map_rev =
             BMCharacterBadCharShiftMapRev::create_bad_char_shift_map(&pattern)?;
@@ -169,7 +126,7 @@ impl BMCharacter {
         Some(BMCharacter {
             bad_char_shift_map,
             bad_char_shift_map_rev,
-            pattern: pattern.iter().copied().collect(),
+            pattern: pattern.as_ref().iter().copied().collect(),
         })
     }
 }
@@ -191,8 +148,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn find_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, 0)
+    pub fn find_full_all_in<T: AsRef<[char]>>(&self, text: T) -> Vec<usize> {
+        find_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 0)
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
@@ -210,8 +167,8 @@ impl BMCharacter {
     ///     )
     /// );
     /// ```
-    pub fn find_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, limit)
+    pub fn find_full_in<T: AsRef<[char]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        find_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
@@ -230,8 +187,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn rfind_full_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
+    pub fn rfind_full_all_in<T: AsRef<[char]>>(&self, text: T) -> Vec<usize> {
+        rfind_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -249,17 +206,24 @@ impl BMCharacter {
     ///     )
     /// );
     /// ```
-    pub fn rfind_full_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
+    pub fn rfind_full_in<T: AsRef<[char]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        rfind_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn find_full<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMCharacterBadCharShiftMap,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a char>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a char>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -270,7 +234,7 @@ pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let pattern_len_dec = pattern_len - 1;
     let pattern_len_inc = pattern_len + 1;
 
-    let last_pattern_char = pattern.value_at(pattern_len_dec);
+    let last_pattern_char = pattern[pattern_len_dec];
 
     let mut shift = 0;
 
@@ -279,18 +243,18 @@ pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate().rev() {
-            if text.value_at(shift + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate().rev() {
+            if text[shift + i] != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
                     break 'outer;
                 }
                 shift += bad_char_shift_map
-                    .get(&text.value_at(shift + pattern_len_dec))
+                    .get(&text[shift + pattern_len_dec])
                     .copied()
                     .unwrap_or(pattern_len)
                     .max({
-                        let c = text.value_at(p);
+                        let c = text[p];
 
                         if c == last_pattern_char {
                             1
@@ -315,11 +279,11 @@ pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
         }
 
         shift += bad_char_shift_map
-            .get(&text.value_at(shift + pattern_len_dec))
+            .get(&text[shift + pattern_len_dec])
             .copied()
             .unwrap_or(pattern_len)
             .max({
-                let c = text.value_at(shift + pattern_len);
+                let c = text[shift + pattern_len];
 
                 if c == last_pattern_char {
                     1
@@ -335,12 +299,19 @@ pub fn find_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     result
 }
 
-pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn rfind_full<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMCharacterBadCharShiftMapRev,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a char>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a char>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -351,7 +322,7 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let pattern_len_dec = pattern_len - 1;
     let pattern_len_inc = pattern_len + 1;
 
-    let first_pattern_char = pattern.value_at(0);
+    let first_pattern_char = pattern[0];
 
     let mut shift = text_len - 1;
 
@@ -360,17 +331,17 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate() {
-            if text.value_at(shift - pattern_len_dec + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate() {
+            if text[shift - pattern_len_dec + i] != pc {
                 if shift < pattern_len {
                     break 'outer;
                 }
                 let s = bad_char_shift_map
-                    .get(&text.value_at(shift - pattern_len_dec))
+                    .get(&text[shift - pattern_len_dec])
                     .copied()
                     .unwrap_or(pattern_len)
                     .max({
-                        let c = text.value_at(shift - pattern_len);
+                        let c = text[shift - pattern_len];
 
                         if c == first_pattern_char {
                             1
@@ -399,11 +370,11 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
         }
 
         let s = bad_char_shift_map
-            .get(&text.value_at(shift - pattern_len_dec))
+            .get(&text[shift - pattern_len_dec])
             .copied()
             .unwrap_or(pattern_len)
             .max({
-                let c = text.value_at(shift - pattern_len);
+                let c = text[shift - pattern_len];
 
                 if c == first_pattern_char {
                     1
@@ -440,8 +411,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn find_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 0)
+    pub fn find_all_in<T: AsRef<[char]>>(&self, text: T) -> Vec<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 0)
     }
 
     /// Find and return the position of the first matched sub-sequence in any text (the haystack).
@@ -458,8 +429,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn find_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 1).first().copied()
+    pub fn find_first_in<T: AsRef<[char]>>(&self, text: T) -> Option<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -477,8 +448,8 @@ impl BMCharacter {
     ///     )
     /// );
     /// ```
-    pub fn find_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, limit)
+    pub fn find_in<T: AsRef<[char]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
@@ -497,8 +468,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn rfind_all_in<T: BMCharacterSearchable>(&self, text: T) -> Vec<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
+    pub fn rfind_all_in<T: AsRef<[char]>>(&self, text: T) -> Vec<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
     /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
@@ -515,8 +486,8 @@ impl BMCharacter {
     ///     ])
     /// );
     /// ```
-    pub fn rfind_first_in<T: BMCharacterSearchable>(&self, text: T) -> Option<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).first().copied()
+    pub fn rfind_first_in<T: AsRef<[char]>>(&self, text: T) -> Option<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -534,17 +505,24 @@ impl BMCharacter {
     ///     )
     /// );
     /// ```
-    pub fn rfind_in<T: BMCharacterSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
+    pub fn rfind_in<T: AsRef<[char]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn find<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMCharacterBadCharShiftMap,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a char>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a char>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -555,7 +533,7 @@ pub fn find<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let pattern_len_dec = pattern_len - 1;
     let pattern_len_inc = pattern_len + 1;
 
-    let last_pattern_char = pattern.value_at(pattern_len_dec);
+    let last_pattern_char = pattern[pattern_len_dec];
 
     let mut shift = 0;
 
@@ -564,18 +542,18 @@ pub fn find<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate().rev() {
-            if text.value_at(shift + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate().rev() {
+            if text[shift + i] != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
                     break 'outer;
                 }
                 shift += bad_char_shift_map
-                    .get(&text.value_at(shift + pattern_len_dec))
+                    .get(&text[shift + pattern_len_dec])
                     .copied()
                     .unwrap_or(pattern_len)
                     .max({
-                        let c = text.value_at(p);
+                        let c = text[p];
 
                         if c == last_pattern_char {
                             1
@@ -608,12 +586,19 @@ pub fn find<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     result
 }
 
-pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn rfind<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMCharacterBadCharShiftMapRev,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a char>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = char> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a char>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -624,7 +609,7 @@ pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let pattern_len_dec = pattern_len - 1;
     let pattern_len_inc = pattern_len + 1;
 
-    let first_pattern_char = pattern.value_at(0);
+    let first_pattern_char = pattern[0];
 
     let mut shift = text_len - 1;
 
@@ -633,17 +618,17 @@ pub fn rfind<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate() {
-            if text.value_at(shift - pattern_len_dec + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate() {
+            if text[shift - pattern_len_dec + i] != pc {
                 if shift < pattern_len {
                     break 'outer;
                 }
                 let s = bad_char_shift_map
-                    .get(&text.value_at(shift - pattern_len_dec))
+                    .get(&text[shift - pattern_len_dec])
                     .copied()
                     .unwrap_or(pattern_len)
                     .max({
-                        let c = text.value_at(shift - pattern_len);
+                        let c = text[shift - pattern_len];
 
                         if c == first_pattern_char {
                             1

@@ -72,8 +72,6 @@ pub mod byte;
 /// This module helps you search character sub-sequences in any character sequence.
 pub mod character;
 
-pub use byte::{BMByte, BMByteBadCharShiftMap, BMByteBadCharShiftMapRev, BMByteSearchable};
+pub use byte::{BMByte, BMByteBadCharShiftMap, BMByteBadCharShiftMapRev};
 #[cfg(feature = "character")]
-pub use character::{
-    BMCharacter, BMCharacterBadCharShiftMap, BMCharacterBadCharShiftMapRev, BMCharacterSearchable,
-};
+pub use character::{BMCharacter, BMCharacterBadCharShiftMap, BMCharacterBadCharShiftMapRev};
