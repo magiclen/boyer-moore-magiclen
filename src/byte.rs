@@ -1,103 +1,23 @@
 use alloc::{
     fmt::{self, Debug, Formatter},
-    string::String,
     vec::Vec,
 };
-use core::{ops::Deref, slice::Iter};
-
+use core::ops::{Deref, Index};
 // TODO Searchable
 
-#[allow(clippy::len_without_is_empty)]
-pub trait BMByteSearchable {
+pub trait LenTrait {
     fn len(&self) -> usize;
-
-    fn value_at(&self, index: usize) -> u8;
-
-    fn iter(&self) -> Iter<u8>;
 }
 
-impl BMByteSearchable for String {
-    #[inline]
+impl LenTrait for [u8] {
     fn len(&self) -> usize {
-        String::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> u8 {
-        self.as_bytes()[index]
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<u8> {
-        self.as_bytes().iter()
+        self.len()
     }
 }
 
-impl BMByteSearchable for &str {
-    #[inline]
+impl LenTrait for Vec<u8> {
     fn len(&self) -> usize {
-        str::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> u8 {
-        unsafe { (*(*self as *const str as *const [u8]))[index] }
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<u8> {
-        self.as_bytes().iter()
-    }
-}
-
-impl BMByteSearchable for dyn Deref<Target = [u8]> {
-    #[inline]
-    fn len(&self) -> usize {
-        <[u8]>::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> u8 {
-        self[index]
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<u8> {
-        <[u8]>::iter(self)
-    }
-}
-
-impl BMByteSearchable for Vec<u8> {
-    #[inline]
-    fn len(&self) -> usize {
-        Vec::len(self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> u8 {
-        self[index]
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<u8> {
-        self.as_slice().iter()
-    }
-}
-
-impl<T: BMByteSearchable> BMByteSearchable for &T {
-    #[inline]
-    fn len(&self) -> usize {
-        <dyn BMByteSearchable>::len(*self)
-    }
-
-    #[inline]
-    fn value_at(&self, index: usize) -> u8 {
-        <dyn BMByteSearchable>::value_at(*self, index)
-    }
-
-    #[inline]
-    fn iter(&self) -> Iter<u8> {
-        <dyn BMByteSearchable>::iter(*self)
+        self.len()
     }
 }
 
@@ -144,9 +64,8 @@ impl Deref for BMByteBadCharShiftMapRev {
 }
 
 impl BMByteBadCharShiftMap {
-    pub fn create_bad_char_shift_map<T: BMByteSearchable>(
-        pattern: T,
-    ) -> Option<BMByteBadCharShiftMap> {
+    pub fn create_bad_char_shift_map<T: AsRef<[u8]>>(pattern: T) -> Option<BMByteBadCharShiftMap> {
+        let pattern = pattern.as_ref();
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -168,9 +87,10 @@ impl BMByteBadCharShiftMap {
 }
 
 impl BMByteBadCharShiftMapRev {
-    pub fn create_bad_char_shift_map<T: BMByteSearchable>(
+    pub fn create_bad_char_shift_map<T: AsRef<[u8]>>(
         pattern: T,
     ) -> Option<BMByteBadCharShiftMapRev> {
+        let pattern = pattern.as_ref();
         let pattern_len = pattern.len();
 
         if pattern_len == 0 {
@@ -211,14 +131,14 @@ impl BMByte {
     ///
     /// let bmb = BMByte::from("oocoo").unwrap();
     /// ```
-    pub fn from<T: BMByteSearchable>(pattern: T) -> Option<BMByte> {
+    pub fn from<T: AsRef<[u8]>>(pattern: T) -> Option<BMByte> {
         let bad_char_shift_map = BMByteBadCharShiftMap::create_bad_char_shift_map(&pattern)?;
         let bad_char_shift_map_rev = BMByteBadCharShiftMapRev::create_bad_char_shift_map(&pattern)?;
 
         Some(BMByte {
             bad_char_shift_map,
             bad_char_shift_map_rev,
-            pattern: pattern.iter().copied().collect(),
+            pattern: pattern.as_ref().iter().copied().collect(),
         })
     }
 }
@@ -235,8 +155,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![1, 4, 7], bmb.find_full_all_in("coocoocoocoo"));
     /// ```
-    pub fn find_full_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, 0)
+    pub fn find_full_all_in<T: AsRef<[u8]>>(&self, text: T) -> Vec<usize> {
+        find_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 0)
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack). If the `limit` is set to `0`, all sub-sequences will be found.
@@ -248,8 +168,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![1, 4], bmb.find_full_in("coocoocoocoo", 2));
     /// ```
-    pub fn find_full_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        find_full(text, &self.pattern, &self.bad_char_shift_map, limit)
+    pub fn find_full_in<T: AsRef<[u8]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        find_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
@@ -263,8 +183,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![7, 4, 1], bmb.rfind_full_all_in("coocoocoocoo"));
     /// ```
-    pub fn rfind_full_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
+    pub fn rfind_full_all_in<T: AsRef<[u8]>>(&self, text: T) -> Vec<usize> {
+        rfind_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -276,17 +196,24 @@ impl BMByte {
     ///
     /// assert_eq!(vec![7, 4], bmb.rfind_full_in("coocoocoocoo", 2));
     /// ```
-    pub fn rfind_full_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        rfind_full(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
+    pub fn rfind_full_in<T: AsRef<[u8]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        rfind_full(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn find_full<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMByteBadCharShiftMap,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a u8>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a u8>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -296,7 +223,7 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
 
     let pattern_len_dec = pattern_len - 1;
 
-    let last_pattern_char = pattern.value_at(pattern_len_dec);
+    let last_pattern_char = pattern[pattern_len_dec];
 
     let mut shift = 0;
 
@@ -305,14 +232,14 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate().rev() {
-            if text.value_at(shift + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate().rev() {
+            if text[shift + i] != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
                     break 'outer;
                 }
-                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
-                    let c = text.value_at(p);
+                shift += bad_char_shift_map[text[shift + pattern_len_dec] as usize].max({
+                    let c = text[p];
 
                     if c == last_pattern_char {
                         1
@@ -336,8 +263,8 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
             break;
         }
 
-        shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
-            let c = text.value_at(shift + pattern_len);
+        shift += bad_char_shift_map[text[shift + pattern_len_dec] as usize].max({
+            let c = text[shift + pattern_len];
 
             if c == last_pattern_char {
                 1
@@ -353,12 +280,19 @@ pub fn find_full<TT: BMByteSearchable, TP: BMByteSearchable>(
     result
 }
 
-pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn rfind_full<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMByteBadCharShiftMapRev,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a u8>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a u8>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -368,7 +302,7 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
 
     let pattern_len_dec = pattern_len - 1;
 
-    let first_pattern_char = pattern.value_at(0);
+    let first_pattern_char = pattern[0];
 
     let mut shift = text_len - 1;
 
@@ -377,13 +311,13 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate() {
-            if text.value_at(shift - pattern_len_dec + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate() {
+            if text[shift - pattern_len_dec + i] != pc {
                 if shift < pattern_len {
                     break 'outer;
                 }
-                let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
-                    let c = text.value_at(shift - pattern_len);
+                let s = bad_char_shift_map[text[shift - pattern_len_dec] as usize].max({
+                    let c = text[shift - pattern_len];
 
                     if c == first_pattern_char {
                         1
@@ -411,8 +345,8 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
             break;
         }
 
-        let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
-            let c = text.value_at(shift - pattern_len);
+        let s = bad_char_shift_map[text[shift - pattern_len_dec] as usize].max({
+            let c = text[shift - pattern_len];
 
             if c == first_pattern_char {
                 1
@@ -444,8 +378,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![1, 7], bmb.find_all_in("coocoocoocoo"));
     /// ```
-    pub fn find_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 0)
+    pub fn find_all_in<T: AsRef<[u8]>>(&self, text: T) -> Vec<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 0)
     }
 
     /// Find and return the position of the first matched sub-sequence in any text (the haystack).
@@ -457,8 +391,8 @@ impl BMByte {
     ///
     /// assert_eq!(Some(1), bmb.find_first_in("coocoocoocoo"));
     /// ```
-    pub fn find_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, 1).first().copied()
+    pub fn find_first_in<T: AsRef<[u8]>>(&self, text: T) -> Option<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -470,8 +404,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![1], bmb.find_in("coocoocoocoo", 1));
     /// ```
-    pub fn find_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        find(text, &self.pattern, &self.bad_char_shift_map, limit)
+    pub fn find_in<T: AsRef<[u8]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        find(text.as_ref(), &self.pattern, &self.bad_char_shift_map, limit)
     }
 }
 
@@ -485,8 +419,8 @@ impl BMByte {
     ///
     /// assert_eq!(vec![7, 1], bmb.rfind_all_in("coocoocoocoo"));
     /// ```
-    pub fn rfind_all_in<T: BMByteSearchable>(&self, text: T) -> Vec<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 0)
+    pub fn rfind_all_in<T: AsRef<[u8]>>(&self, text: T) -> Vec<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 0)
     }
 
     /// Find and return the position of the first matched sub-sequence in any text (the haystack) from its tail to its head.
@@ -498,8 +432,8 @@ impl BMByte {
     ///
     /// assert_eq!(Some(7), bmb.rfind_first_in("coocoocoocoo"));
     /// ```
-    pub fn rfind_first_in<T: BMByteSearchable>(&self, text: T) -> Option<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, 1).first().copied()
+    pub fn rfind_first_in<T: AsRef<[u8]>>(&self, text: T) -> Option<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, 1).first().copied()
     }
 
     /// Find and return the positions of matched sub-sequences in any text (the haystack) but not including the overlap from its tail to its head. If the `limit` is set to `0`, all sub-sequences will be found.
@@ -511,17 +445,24 @@ impl BMByte {
     ///
     /// assert_eq!(vec![7], bmb.rfind_in("coocoocoocoo", 1));
     /// ```
-    pub fn rfind_in<T: BMByteSearchable>(&self, text: T, limit: usize) -> Vec<usize> {
-        rfind(text, &self.pattern, &self.bad_char_shift_map_rev, limit)
+    pub fn rfind_in<T: AsRef<[u8]>>(&self, text: T, limit: usize) -> Vec<usize> {
+        rfind(text.as_ref(), &self.pattern, &self.bad_char_shift_map_rev, limit)
     }
 }
 
-pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn find<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMByteBadCharShiftMap,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a u8>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a u8>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -531,7 +472,7 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
 
     let pattern_len_dec = pattern_len - 1;
 
-    let last_pattern_char = pattern.value_at(pattern_len_dec);
+    let last_pattern_char = pattern[pattern_len_dec];
 
     let mut shift = 0;
 
@@ -540,14 +481,14 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate().rev() {
-            if text.value_at(shift + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate().rev() {
+            if text[shift + i] != pc {
                 let p = shift + pattern_len;
                 if p == text_len {
                     break 'outer;
                 }
-                shift += bad_char_shift_map[text.value_at(shift + pattern_len_dec) as usize].max({
-                    let c = text.value_at(p);
+                shift += bad_char_shift_map[text[shift + pattern_len_dec] as usize].max({
+                    let c = text[p];
 
                     if c == last_pattern_char {
                         1
@@ -580,12 +521,19 @@ pub fn find<TT: BMByteSearchable, TP: BMByteSearchable>(
     result
 }
 
-pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
-    text: TT,
-    pattern: TP,
+pub fn rfind<'a, TT: 'a, TP: 'a>(
+    text: &'a TT,
+    pattern: &'a TP,
     bad_char_shift_map: &BMByteBadCharShiftMapRev,
     limit: usize,
-) -> Vec<usize> {
+) -> Vec<usize>
+where
+    TT: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TT: IntoIterator<Item = &'a u8>,
+    <&'a TT as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator,
+    TP: Index<usize, Output = u8> + LenTrait + ?Sized,
+    &'a TP: IntoIterator<Item = &'a u8>,
+    <&'a TP as IntoIterator>::IntoIter: Sized + DoubleEndedIterator + ExactSizeIterator, {
     let text_len = text.len();
     let pattern_len = pattern.len();
 
@@ -595,7 +543,7 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
 
     let pattern_len_dec = pattern_len - 1;
 
-    let first_pattern_char = pattern.value_at(0);
+    let first_pattern_char = pattern[0];
 
     let mut shift = text_len - 1;
 
@@ -604,13 +552,13 @@ pub fn rfind<TT: BMByteSearchable, TP: BMByteSearchable>(
     let mut result = vec![];
 
     'outer: loop {
-        for (i, pc) in pattern.iter().copied().enumerate() {
-            if text.value_at(shift - pattern_len_dec + i) != pc {
+        for (i, pc) in pattern.into_iter().copied().enumerate() {
+            if text[shift - pattern_len_dec + i] != pc {
                 if shift < pattern_len {
                     break 'outer;
                 }
-                let s = bad_char_shift_map[text.value_at(shift - pattern_len_dec) as usize].max({
-                    let c = text.value_at(shift - pattern_len);
+                let s = bad_char_shift_map[text[shift - pattern_len_dec] as usize].max({
+                    let c = text[shift - pattern_len];
 
                     if c == first_pattern_char {
                         1

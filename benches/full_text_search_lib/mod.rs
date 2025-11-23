@@ -59,19 +59,19 @@ pub fn regex_search<S: AsRef<str>, P: AsRef<str>>(text: S, pattern: P) -> Vec<us
     result
 }
 
-pub fn bmb_search<TT: BMByteSearchable, TP: BMByteSearchable>(text: TT, pattern: TP) -> Vec<usize> {
+pub fn bmb_search<TT: AsRef<[u8]>, TP: AsRef<[u8]>>(text: TT, pattern: TP) -> Vec<usize> {
     let bad_char_shift_map = BMByteBadCharShiftMap::create_bad_char_shift_map(&pattern).unwrap();
 
-    boyer_moore_magiclen::byte::find_full(text, pattern, &bad_char_shift_map, 0)
+    boyer_moore_magiclen::byte::find_full(text.as_ref(), pattern.as_ref(), &bad_char_shift_map, 0)
 }
 
 #[cfg(feature = "character")]
-pub fn character_search_char<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
+pub fn character_search_char<TT: AsRef<[char]>, TP: AsRef<[char]>>(
     text: TT,
     pattern: TP,
 ) -> Vec<usize> {
     let bad_char_shift_map =
         BMCharacterBadCharShiftMap::create_bad_char_shift_map(&pattern).unwrap();
 
-    boyer_moore_magiclen::character::find_full(text, pattern, &bad_char_shift_map, 0)
+    character::find_full(text.as_ref(), pattern.as_ref(), &bad_char_shift_map, 0)
 }
