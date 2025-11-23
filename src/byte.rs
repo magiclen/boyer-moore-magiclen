@@ -13,7 +13,7 @@ pub trait BMByteSearchable {
 
     fn value_at(&self, index: usize) -> u8;
 
-    fn iter(&self) -> Iter<u8>;
+    fn iter(&self) -> Iter<'_, u8>;
 }
 
 impl BMByteSearchable for String {
@@ -28,7 +28,7 @@ impl BMByteSearchable for String {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<u8> {
+    fn iter(&self) -> Iter<'_, u8> {
         self.as_bytes().iter()
     }
 }
@@ -45,7 +45,7 @@ impl BMByteSearchable for &str {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<u8> {
+    fn iter(&self) -> Iter<'_, u8> {
         self.as_bytes().iter()
     }
 }
@@ -62,7 +62,7 @@ impl BMByteSearchable for dyn Deref<Target = [u8]> {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<u8> {
+    fn iter(&self) -> Iter<'_, u8> {
         <[u8]>::iter(self)
     }
 }
@@ -79,7 +79,7 @@ impl BMByteSearchable for Vec<u8> {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<u8> {
+    fn iter(&self) -> Iter<'_, u8> {
         self.as_slice().iter()
     }
 }
@@ -96,7 +96,7 @@ impl<T: BMByteSearchable> BMByteSearchable for &T {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<u8> {
+    fn iter(&self) -> Iter<'_, u8> {
         <dyn BMByteSearchable>::iter(*self)
     }
 }

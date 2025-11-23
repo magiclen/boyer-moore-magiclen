@@ -1,5 +1,3 @@
-#![cfg(feature = "character")]
-
 use core::slice::Iter;
 use std::{collections::HashMap, ops::Deref};
 
@@ -11,7 +9,7 @@ pub trait BMCharacterSearchable {
 
     fn value_at(&self, index: usize) -> char;
 
-    fn iter(&self) -> Iter<char>;
+    fn iter(&self) -> Iter<'_, char>;
 }
 
 impl BMCharacterSearchable for dyn Deref<Target = [char]> {
@@ -26,7 +24,7 @@ impl BMCharacterSearchable for dyn Deref<Target = [char]> {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<char> {
+    fn iter(&self) -> Iter<'_, char> {
         <[char]>::iter(self)
     }
 }
@@ -43,7 +41,7 @@ impl BMCharacterSearchable for Vec<char> {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<char> {
+    fn iter(&self) -> Iter<'_, char> {
         self.as_slice().iter()
     }
 }
@@ -60,7 +58,7 @@ impl<T: BMCharacterSearchable> BMCharacterSearchable for &T {
     }
 
     #[inline]
-    fn iter(&self) -> Iter<char> {
+    fn iter(&self) -> Iter<'_, char> {
         <dyn BMCharacterSearchable>::iter(*self)
     }
 }
