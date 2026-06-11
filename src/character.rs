@@ -1,8 +1,6 @@
 use core::slice::Iter;
 use std::{collections::HashMap, ops::Deref};
 
-// TODO Searchable
-
 #[allow(clippy::len_without_is_empty)]
 pub trait BMCharacterSearchable {
     fn len(&self) -> usize;
@@ -62,8 +60,6 @@ impl<T: BMCharacterSearchable> BMCharacterSearchable for &T {
         <dyn BMCharacterSearchable>::iter(*self)
     }
 }
-
-// TODO BasCharShiftMap
 
 #[derive(Debug)]
 pub struct BMCharacterBadCharShiftMap {
@@ -141,8 +137,6 @@ impl BMCharacterBadCharShiftMapRev {
     }
 }
 
-// TODO BM
-
 /// Using Boyer-Moore-MagicLen to search character sub-sequences in any character sequence.
 #[derive(Debug)]
 pub struct BMCharacter {
@@ -152,7 +146,7 @@ pub struct BMCharacter {
 }
 
 impl BMCharacter {
-    /// Create a `BMByte` instance from a pattern (the search needle).
+    /// Create a `BMCharacter` instance from a pattern (the search needle).
     ///
     /// ```
     /// use boyer_moore_magiclen::BMCharacter;
@@ -171,8 +165,6 @@ impl BMCharacter {
         })
     }
 }
-
-// TODO Find Full
 
 impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack).
@@ -420,8 +412,6 @@ pub fn rfind_full<TT: BMCharacterSearchable, TP: BMCharacterSearchable>(
 
     result
 }
-
-// TODO Find
 
 impl BMCharacter {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.

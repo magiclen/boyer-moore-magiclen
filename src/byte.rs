@@ -5,8 +5,6 @@ use alloc::{
 };
 use core::{ops::Deref, slice::Iter};
 
-// TODO Searchable
-
 #[allow(clippy::len_without_is_empty)]
 pub trait BMByteSearchable {
     fn len(&self) -> usize;
@@ -41,7 +39,7 @@ impl BMByteSearchable for &str {
 
     #[inline]
     fn value_at(&self, index: usize) -> u8 {
-        unsafe { (*(*self as *const str as *const [u8]))[index] }
+        self.as_bytes()[index]
     }
 
     #[inline]
@@ -100,8 +98,6 @@ impl<T: BMByteSearchable> BMByteSearchable for &T {
         <dyn BMByteSearchable>::iter(*self)
     }
 }
-
-// TODO BasCharShiftMap
 
 pub struct BMByteBadCharShiftMap {
     t: [usize; 256],
@@ -193,8 +189,6 @@ impl BMByteBadCharShiftMapRev {
     }
 }
 
-// TODO BM
-
 /// Using Boyer-Moore-MagicLen to search byte sub-sequences in any byte sequence, including self-synchronizing string encoding data such as UTF-8.
 #[derive(Debug)]
 pub struct BMByte {
@@ -222,8 +216,6 @@ impl BMByte {
         })
     }
 }
-
-// TODO Find Full
 
 impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack).
@@ -431,8 +423,6 @@ pub fn rfind_full<TT: BMByteSearchable, TP: BMByteSearchable>(
 
     result
 }
-
-// TODO Find
 
 impl BMByte {
     /// Find and return the positions of all matched sub-sequences in any text (the haystack) but not including the overlap.
